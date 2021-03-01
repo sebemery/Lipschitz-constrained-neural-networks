@@ -4,3 +4,7 @@
 __pycache__/
 saved/
 */__pycache__/
+data/singlecoil_train_5_2d/
+data/singlecoil_val_5_2d/
+data/train_dummy/
+data/val_dummy/
