@@ -1,7 +1,7 @@
 # Lipschitz-constrained neural networks
 Master semester project carried out at the Biomedical imaging group (LIB) at EPFL during the spring 2021 semester under the supervision of Bohra Pakshal
 
-####Description
+#### Description
 To Do
 
 #### Requirements
