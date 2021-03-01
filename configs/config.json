@@ -1,7 +1,7 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_dummy3",
-    "seeds": [1],
+    "experim_name": "DnCNN_dummy",
+    "seeds": [1,2],
     "sigma": 0.1,
 
     "model":{
