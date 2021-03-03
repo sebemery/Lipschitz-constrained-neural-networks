@@ -4,7 +4,13 @@
 __pycache__/
 saved/
 */__pycache__/
-data/singlecoil_train_5_2d/
-data/singlecoil_val_5_2d/
-data/train_dummy/
-data/val_dummy/
+data/singlecoil_train_5_2_0.1/*
+data/singlecoil_validation_5_1_0.1/*
+data/singlecoil_test_5_1_0.1/*
+data/train_dummy/*
+data/val_dummy/*
+data/test_dummy/*
+data/singlecoil_train/
+data/singlecoil_val/
+data/singlecoil_validation/
+data/singlecoil_test/

@@ -18,11 +18,10 @@ class Trainer:
         self.config = config
         self.train_loader = trainloader
         self.val_loader = valloader
-        if device == "gpu":
-            self.model = model.cuda()
-        else:
-            self.model = model
-        self.str_device = device
+        self.model = model
+        self.device = device
+        if self.device != "cpu":
+            self.model = self.model.to(device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=config["optimizer"]["args"]["lr"],
                                           weight_decay=config["optimizer"]["args"]["weight_decay"])
         self.criterion = torch.nn.MSELoss()
@@ -63,6 +62,9 @@ class Trainer:
                 self.logger.info('\n\n')
                 for k, v in results.items():
                     self.logger.info(f'{str(k):15s}: {v}')
+                    if epoch == self.epochs:
+                        with open(f'{self.checkpoint_dir}/val.txt', 'w') as f:
+                            f.write("%s\n" % (k + ':' + f'{v}'))
 
             if self.train_logger is not None:
                 log = {'epoch': epoch, **results}
@@ -85,11 +87,11 @@ class Trainer:
 
         self._reset_metrics()
         for batch_idx, data in enumerate(tbar):
-            cropp1, cropp2, cropp3, cropp4, target1, target2, target3, target4, _ = data
-            cropp = torch.cat([cropp1, cropp2, cropp3, cropp4], dim=0)
-            target = torch.cat([target1, target2, target3, target4], dim=0)
-            if self.str_device == 'gpu':
-                cropp, target = cropp.cuda(non_blocking=True), target.cuda(non_blocking=True)
+            cropp1, cropp2, cropp3, cropp4, cropp5, cropp6, cropp7, cropp8, target1, target2, target3, target4, _ = data
+            cropp = torch.cat([cropp1, cropp2, cropp3, cropp4, cropp5, cropp6, cropp7, cropp8], dim=0)
+            target = torch.cat([target1, target2, target3, target4, target1, target2, target3, target4], dim=0)
+            if self.device != 'cpu':
+                cropp, target = cropp.to(self.device, non_blocking=True), target.to(self.device, non_blocking=True)
 
             self.optimizer.zero_grad()
 
@@ -126,8 +128,8 @@ class Trainer:
                 cropp1, cropp2, cropp3, cropp4, target1, target2, target3, target4, _ = data
                 cropp = torch.cat([cropp1, cropp2, cropp3, cropp4], dim=0)
                 target = torch.cat([target1, target2, target3, target4], dim=0)
-                if self.str_device == 'gpu':
-                    cropp, target = cropp.cuda(non_blocking=True), target.cuda(non_blocking=True)
+                if self.device == 'cpu':
+                    cropp, target = cropp.to(self.device, non_blocking=True), target.to(self.device, non_blocking=True)
 
                 output = self.model(cropp)
 

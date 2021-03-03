@@ -22,20 +22,20 @@ def main():
     config = json.load(open(args.config))
 
     # DATA
-    testdataset = dataloader.KneeMRI(config["val_loader"]["data_dir"], config["sigma"], config["model"]["architecture"])
-    testloader = DataLoader(testdataset, batch_size=config["val_loader"]["batch_size"],
-                           shuffle=config["val_loader"]["shuffle"], num_workers=config["val_loader"]["num_workers"])
+    testdataset = dataloader.KneeMRI(config["test_loader"]["target_dir"], config["test_loader"]["noise_dirs"])
+    testloader = DataLoader(testdataset, batch_size=config["test_loader"]["batch_size"],
+                           shuffle=config["test_loader"]["shuffle"], num_workers=config["test_loader"]["num_workers"])
 
     # MODEL
     model = models.DnCNN(depth=config["model"]["depth"], n_channels=config["model"]["n_channels"],
                          image_channels=config["model"]["image_channels"], kernel_size=config["model"]["kernel_size"],
                          padding=config["model"]["padding"], architecture=config["model"]["architecture"],
                          spectral_norm=config["model"]["spectral_norm"])
-    map_location = args.map
-    checkpoint = torch.load(args.model, map_location)
+    device = args.device
+    checkpoint = torch.load(args.model, device)
     criterion = torch.nn.MSELoss()
 
-    if map_location == 'cpu':
+    if device == 'cpu':
         for key in list(checkpoint['state_dict'].keys()):
             if 'module.' in key:
                 checkpoint['state_dict'][key.replace('module.', '')] = checkpoint['state_dict'][key]
@@ -48,8 +48,8 @@ def main():
         model.load_state_dict(checkpoint['state_dict'], strict=False)
     model.float()
     model.eval()
-    if args.map == 'gpu':
-        model.cuda()
+    if args.device != 'cpu':
+        model.to(device)
 
     check_directory(args.experiment)
 
@@ -63,14 +63,14 @@ def main():
             cropp1, cropp2, cropp3, cropp4, target1, target2, target3, target4, image_id = data
             cropp = torch.cat([cropp1, cropp2, cropp3, cropp4], dim=0)
             target = torch.cat([target1, target2, target3, target4], dim=0)
-            if args.map == 'gpu':
-                cropp, target = cropp.cuda(non_blocking=True), target.cuda(non_blocking=True)
+            if args.device != 'cpu':
+                cropp, target = cropp.to(non_blocking=True), target.cuda(non_blocking=True)
 
             output = model(cropp)
 
             # LOSS
             loss = criterion(output, target)
-            total_loss_val.update(loss)
+            total_loss_val.update(loss.cpu())
 
             # PRINT INFO
             tbar.set_description('EVAL | MSELoss: {:.3f} |'.format(total_loss_val.average))
@@ -78,14 +78,18 @@ def main():
             # save the images
             output = output.numpy()
             target = target.numpy()
+            cropp = cropp.numpy()
             output = np.squeeze(output, axis=1)
             target = np.squeeze(target, axis=1)
+            cropp = np.squeeze(cropp, axis=1)
             output = batch_scale(output)
             target = batch_scale(target)
+            cropp = batch_scale(cropp)
             for i in range(output.shape[0]):
                 j = math.floor(i / 4)
                 cv.imwrite(f'{args.experiment}/test_result/{image_id[j][:-4]}_{i%4}_prediction.png', output[i])
                 cv.imwrite(f'{args.experiment}/test_result/{image_id[j][:-4]}_{i%4}_target.png', target[i])
+                cv.imwrite(f'{args.experiment}/test_result/{image_id[j][:-4]}_{i % 4}_input.png', cropp[i])
 
         # save the metric
         metrics = {"MSE_Loss": np.round(total_loss_val.average, 5)}
@@ -101,8 +105,8 @@ def parse_arguments():
                         help='Path to the config file')
     parser.add_argument('--model', default=None, type=str,
                         help='Path to the trained .pth model')
-    parser.add_argument('--map', default="cpu", type=str,
-                        help='map location')
+    parser.add_argument('--device', default="cpu", type=str,
+                        help='device location')
     parser.add_argument('--experiment', default=None, type=str,
                         help='path to the folder experiment')
     args = parser.parse_args()

@@ -1,17 +1,17 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_dummy",
-    "seeds": [1,2],
+    "experim_name": "DnCNN_direct_false",
+    "seeds": [42],
     "sigma": 0.1,
 
     "model":{
-        "depth": 7,
+        "depth": 4,
         "n_channels": 64,
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
         "architecture": "direct",
-        "spectral_norm": true
+        "spectral_norm": false
     },
 
 
@@ -25,37 +25,40 @@
 
 
     "train_loader": {
-        "data_dir": "data/train_dummy",
-        "batch_size": 10,
+        "target_dir": "data/singlecoil_train_5_2_0.1/Target_tensors",
+        "noise_dirs": ["data/singlecoil_train_5_2_0.1/Noise_tensors_1", "data/singlecoil_train_5_2_0.1/Noise_tensors_2"],
+        "batch_size": 200,
         "shuffle": true,
         "num_workers": 0
     },
 
 
     "val_loader": {
-        "data_dir": "data/val_dummy",
-        "batch_size": 1,
+        "target_dir": "data/singlecoil_validation_5_2_0.1/Target_tensors",
+        "noise_dirs": ["data/singlecoil_validation_5_2_0.1/Noise_tensors_1"],
+        "batch_size": 100,
         "shuffle": false,
         "num_workers": 0
     },
 
     "test_loader": {
-        "data_dir": "data/test_dummy",
+        "target_dir": "data/singlecoil_test_5_2_0.1/Target_tensors",
+        "noise_dirs": ["data/singlecoil_test_5_2_0.1/Noise_tensors_1"],
         "batch_size": 1,
         "shuffle": false,
         "num_workers": 0
     },
 
     "trainer": {
-        "epochs": 20,
+        "epochs": 500,
         "save_dir": "saved/",
-        "save_period": 5,
+        "save_period": 25,
         
         "tensorboardX": true,
         "log_dir": "saved/",
-        "log_per_iter": 20,
+        "log_per_iter": 100,
 
         "val": true,
-        "val_per_epochs": 5
+        "val_per_epochs": 25
     }
 }

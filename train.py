@@ -10,8 +10,8 @@ import os
 
 
 def main(config, resume, device):
-    train_data = dataloader.KneeMRI(config["train_loader"]["data_dir"], config["sigma"], config["model"]["architecture"])
-    val_data = dataloader.KneeMRI(config["val_loader"]["data_dir"], config["sigma"], config["model"]["architecture"])
+    train_data = dataloader.KneeMRI(config["train_loader"]["target_dir"], config["train_loader"]["noise_dirs"])
+    val_data = dataloader.KneeMRI(config["val_loader"]["target_dir"], config["val_loader"]["noise_dirs"])
     trainloader = DataLoader(train_data, batch_size=config["train_loader"]["batch_size"],
                              shuffle=config["train_loader"]["shuffle"], num_workers=config["train_loader"]["num_workers"])
     valloader = DataLoader(val_data, batch_size=config["val_loader"]["batch_size"],
