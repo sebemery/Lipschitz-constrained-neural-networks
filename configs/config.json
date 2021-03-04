@@ -34,16 +34,16 @@
 
 
     "val_loader": {
-        "target_dir": "data/singlecoil_validation_5_2_0.1/Target_tensors",
-        "noise_dirs": ["data/singlecoil_validation_5_2_0.1/Noise_tensors_1"],
+        "target_dir": "data/singlecoil_validation_5_1_0.1/Target_tensors",
+        "noise_dirs": ["data/singlecoil_validation_5_1_0.1/Noise_tensors_1"],
         "batch_size": 100,
         "shuffle": false,
         "num_workers": 0
     },
 
     "test_loader": {
-        "target_dir": "data/singlecoil_test_5_2_0.1/Target_tensors",
-        "noise_dirs": ["data/singlecoil_test_5_2_0.1/Noise_tensors_1"],
+        "target_dir": "data/singlecoil_test_5_1_0.1/Target_tensors",
+        "noise_dirs": ["data/singlecoil_test_5_1_0.1/Noise_tensors_1"],
         "batch_size": 1,
         "shuffle": false,
         "num_workers": 0
