@@ -27,7 +27,7 @@
     "train_loader": {
         "target_dir": "data/singlecoil_train_5_2_0.1/Target_tensors",
         "noise_dirs": ["data/singlecoil_train_5_2_0.1/Noise_tensors_1", "data/singlecoil_train_5_2_0.1/Noise_tensors_2"],
-        "batch_size": 50,
+        "batch_size": 25,
         "shuffle": true,
         "num_workers": 0
     },
@@ -36,7 +36,7 @@
     "val_loader": {
         "target_dir": "data/singlecoil_validation_5_1_0.1/Target_tensors",
         "noise_dirs": ["data/singlecoil_validation_5_1_0.1/Noise_tensors_1"],
-        "batch_size": 50,
+        "batch_size": 25,
         "shuffle": false,
         "num_workers": 0
     },
