@@ -27,7 +27,7 @@
     "train_loader": {
         "target_dir": "data/singlecoil_train_5_2_0.1/Target_tensors",
         "noise_dirs": ["data/singlecoil_train_5_2_0.1/Noise_tensors_1", "data/singlecoil_train_5_2_0.1/Noise_tensors_2"],
-        "batch_size": 200,
+        "batch_size": 100,
         "shuffle": true,
         "num_workers": 0
     },
