@@ -128,7 +128,7 @@ class Trainer:
                 cropp1, cropp2, cropp3, cropp4, target1, target2, target3, target4, _ = data
                 cropp = torch.cat([cropp1, cropp2, cropp3, cropp4], dim=0)
                 target = torch.cat([target1, target2, target3, target4], dim=0)
-                if self.device == 'cpu':
+                if self.device != 'cpu':
                     cropp, target = cropp.to(self.device, non_blocking=True), target.to(self.device, non_blocking=True)
 
                 output = self.model(cropp)
