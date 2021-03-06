@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_direct_false",
+    "experim_name": "DnCNN_direct_true",
     "seeds": [42],
     "sigma": 0.1,
 
@@ -11,7 +11,7 @@
         "kernel_size": 3,
         "padding": 1,
         "architecture": "direct",
-        "spectral_norm": false
+        "spectral_norm": true
     },
 
 
