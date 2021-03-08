@@ -80,7 +80,8 @@ class SelectSlices:
                     noise = torch.randn(slice_tensor.shape)
                     noisy_slice = slice_tensor + noise * self.sigma
                     path_images = paths_images[j]
-                    cv.imwrite(f'{path_images}/{file[:-3]}_{i}.png', 255 * noisy_slice.numpy())
+                    noisy_slices_tmp = ((noisy_slice.numpy() - np.amin(noisy_slice.numpy())) / (np.amax(noisy_slice.numpy()) - np.amin(noisy_slice.numpy())))
+                    cv.imwrite(f'{path_images}/{file[:-3]}_{i}.png', 255 * noisy_slices_tmp)
                     path_tensors = paths_tensors[j]
                     torch.save(noisy_slice, f'{path_tensors}/{file[:-3]}_{i}.pt')
                     snr = 20*np.log10(np.linalg.norm(slice_tensor.numpy().flatten('F'))/np.linalg.norm(noisy_slice.numpy().flatten('F')-slice_tensor.numpy().flatten('F')))

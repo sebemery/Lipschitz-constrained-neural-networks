@@ -7,6 +7,9 @@ saved/
 data/singlecoil_train_5_2_0.1/*
 data/singlecoil_validation_5_1_0.1/*
 data/singlecoil_test_5_1_0.1/*
+data/singlecoil_train_5_2_0.02/*
+data/singlecoil_validation_5_1_0.02/*
+data/singlecoil_test_5_1_0.02/*
 data/train_dummy/*
 data/val_dummy/*
 data/test_dummy/*
