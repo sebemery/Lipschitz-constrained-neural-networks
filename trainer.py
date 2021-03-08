@@ -24,7 +24,7 @@ class Trainer:
             self.model = self.model.to(device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=config["optimizer"]["args"]["lr"],
                                           weight_decay=config["optimizer"]["args"]["weight_decay"])
-        self.criterion = torch.nn.MSELoss()
+        self.criterion = torch.nn.MSELoss(reduction="sum")
         self.train_logger = train_logger
         self.logger = logging.getLogger(self.__class__.__name__)
         self.start_epoch = 1
@@ -95,9 +95,10 @@ class Trainer:
 
             self.optimizer.zero_grad()
 
+            batch_size = cropp.shape[0]
             output = self.model(cropp)
 
-            batch_loss = self.criterion(output, target)
+            batch_loss = self.criterion(output, target)/batch_size
             batch_loss.backward()
             self.optimizer.step()
             self._update_losses(batch_loss.detach().cpu().numpy())
@@ -131,10 +132,11 @@ class Trainer:
                 if self.device != 'cpu':
                     cropp, target = cropp.to(self.device, non_blocking=True), target.to(self.device, non_blocking=True)
 
+                batch_size = cropp.shape[0]
                 output = self.model(cropp)
 
                 # LOSS
-                loss = self.criterion(output, target)
+                loss = self.criterion(output, target)/batch_size
                 total_loss_val.update(loss.cpu())
 
                 # PRINT INFO

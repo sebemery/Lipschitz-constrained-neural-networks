@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_direct_true",
+    "experim_name": "DnCNN_residual_Chen",
     "seeds": [42],
     "sigma": 0.1,
 
@@ -10,8 +10,8 @@
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
-        "architecture": "direct",
-        "spectral_norm": true
+        "architecture": "residual",
+        "spectral_norm": "Chen"
     },
 
 
@@ -50,7 +50,7 @@
     },
 
     "trainer": {
-        "epochs": 500,
+        "epochs": 600,
         "save_dir": "saved/",
         "save_period": 25,
         

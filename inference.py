@@ -30,10 +30,10 @@ def main():
     model = models.DnCNN(depth=config["model"]["depth"], n_channels=config["model"]["n_channels"],
                          image_channels=config["model"]["image_channels"], kernel_size=config["model"]["kernel_size"],
                          padding=config["model"]["padding"], architecture=config["model"]["architecture"],
-                         spectral_norm=config["model"]["spectral_norm"])
+                         spectral_norm=["model"]["spectral_norm"])
     device = args.device
     checkpoint = torch.load(args.model, device)
-    criterion = torch.nn.MSELoss()
+    criterion = torch.nn.MSELoss(reduction="sum")
 
     if device == 'cpu':
         for key in list(checkpoint['state_dict'].keys()):
@@ -64,11 +64,13 @@ def main():
             target = torch.cat([target1, target2, target3, target4], dim=0)
             if args.device != 'cpu':
                 cropp, target = cropp.to(non_blocking=True), target.cuda(non_blocking=True)
-
+            batch_size = cropp.shape[0]
+            print(cropp.shape)
+            print(batch_size)
             output = model(cropp)
 
             # LOSS
-            loss = criterion(output, target)
+            loss = criterion(output, target)/batch_size
             total_loss_val.update(loss.cpu())
 
             # PRINT INFO

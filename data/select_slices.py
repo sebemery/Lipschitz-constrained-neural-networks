@@ -64,7 +64,7 @@ class SelectSlices:
         paths_images, paths_tensors = self.check_output_directory()
         # get the list of the files volume
         files_volume = self.read_file_names()
-
+        SNR = []
         # iterate over the files
         for file in files_volume:
             path = os.path.join(self.volume_dir, file)
@@ -83,6 +83,12 @@ class SelectSlices:
                     cv.imwrite(f'{path_images}/{file[:-3]}_{i}.png', 255 * noisy_slice.numpy())
                     path_tensors = paths_tensors[j]
                     torch.save(noisy_slice, f'{path_tensors}/{file[:-3]}_{i}.pt')
+                    snr = 20*np.log10(np.linalg.norm(slice_tensor.numpy().flatten('F'))/np.linalg.norm(noisy_slice.numpy().flatten('F')-slice_tensor.numpy().flatten('F')))
+                    SNR.append(snr)
+        SNR = np.array(SNR)
+        print("The mean SNR is {}".format(SNR.mean()))
+        print("The max SNR is {}".format(np.amax(SNR)))
+        print("The min SNR is {}".format(np.amin(SNR)))
 
 
 if __name__ == '__main__':
@@ -96,7 +102,7 @@ if __name__ == '__main__':
                         help='number of slices to extract from the volume')
     parser.add_argument('-n', '--noise', default=2, type=int,
                         help='number of noisy realisation')
-    parser.add_argument('-s', '--sigma', default=0.1, type=float,
+    parser.add_argument('-s', '--sigma', default=0.02, type=float,
                         help='std of the gaussian noise')
     args = parser.parse_args()
 
