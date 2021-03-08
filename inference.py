@@ -30,7 +30,7 @@ def main():
     model = models.DnCNN(depth=config["model"]["depth"], n_channels=config["model"]["n_channels"],
                          image_channels=config["model"]["image_channels"], kernel_size=config["model"]["kernel_size"],
                          padding=config["model"]["padding"], architecture=config["model"]["architecture"],
-                         spectral_norm=["model"]["spectral_norm"])
+                         spectral_norm=config["model"]["spectral_norm"])
     device = args.device
     checkpoint = torch.load(args.model, device)
     criterion = torch.nn.MSELoss(reduction="sum")
