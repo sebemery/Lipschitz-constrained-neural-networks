@@ -52,7 +52,6 @@ def main():
         model.to(device)
 
     check_directory(args.experiment)
-
     # LOOP OVER THE DATA
     tbar = tqdm(testloader, ncols=100)
 
