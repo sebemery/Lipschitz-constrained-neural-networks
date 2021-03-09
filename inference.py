@@ -1,6 +1,5 @@
 import argparse
 import numpy as np
-import sys
 import json
 import os
 import torch
