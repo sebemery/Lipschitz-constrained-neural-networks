@@ -64,8 +64,6 @@ def main():
             if args.device != 'cpu':
                 cropp, target = cropp.to(non_blocking=True), target.cuda(non_blocking=True)
             batch_size = cropp.shape[0]
-            print(cropp.shape)
-            print(batch_size)
             output = model(cropp)
 
             # LOSS
@@ -73,7 +71,7 @@ def main():
             total_loss_val.update(loss.cpu())
 
             # PRINT INFO
-            tbar.set_description('EVAL | MSELoss: {:.3f} |'.format(total_loss_val.average))
+            tbar.set_description('EVAL | MSELoss: {:.5f} |'.format(total_loss_val.average))
 
             # save the images
             output = output.numpy()
@@ -92,7 +90,7 @@ def main():
                 cv.imwrite(f'{args.experiment}/test_result/{image_id[j][:-4]}_{i % 4}_input.png', cropp[i])
 
         # save the metric
-        metrics = {"MSE_Loss": np.round(total_loss_val.average, 5)}
+        metrics = {"MSE_Loss": np.round(total_loss_val.average, 8)}
 
         with open(f'{args.experiment}/test_result/test.txt', 'w') as f:
             for k, v in list(metrics.items()):
