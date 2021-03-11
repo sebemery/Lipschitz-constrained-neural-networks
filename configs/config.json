@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_residual_Normal_0.05",
+    "experim_name": "DnCNN_residual_None_0.05",
     "seeds": [42],
     "sigma": 0.05,
 

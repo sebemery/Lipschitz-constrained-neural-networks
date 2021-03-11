@@ -80,6 +80,11 @@ def main():
             output = np.squeeze(output, axis=1)
             target = np.squeeze(target, axis=1)
             cropp = np.squeeze(cropp, axis=1)
+            SNR = []
+            for idx in range(batch_size):
+                snr = 20 * np.log10(np.linalg.norm(slice_tensor.numpy().flatten('F')) / np.linalg.norm(
+                    noisy_slice.numpy().flatten('F') - slice_tensor.numpy().flatten('F')))
+                SNR.append(snr)
             output = batch_scale(output)
             target = batch_scale(target)
             cropp = batch_scale(cropp)
