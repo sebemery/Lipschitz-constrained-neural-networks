@@ -90,6 +90,10 @@ class SelectSlices:
         print("The mean SNR is {}".format(SNR.mean()))
         print("The max SNR is {}".format(np.amax(SNR)))
         print("The min SNR is {}".format(np.amin(SNR)))
+        metrics = {"Mean SNR": SNR.mean(), "Max SNR": np.amax(SNR), "Min SNR": np.amin(SNR)}
+        with open('SNR.txt', 'w') as f:
+            for k, v in list(metrics.items()):
+                f.write("%s\n" % (k + ':' + f'{v}'))
 
 
 if __name__ == '__main__':
