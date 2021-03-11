@@ -55,6 +55,8 @@ def main():
     tbar = tqdm(testloader, ncols=100)
 
     total_loss_val = AverageMeter()
+    Signal = []
+    Noise = []
 
     with torch.no_grad():
         for batch_idx, data in enumerate(tbar):
@@ -80,11 +82,11 @@ def main():
             output = np.squeeze(output, axis=1)
             target = np.squeeze(target, axis=1)
             cropp = np.squeeze(cropp, axis=1)
-            SNR = []
             for idx in range(batch_size):
-                snr = 20 * np.log10(np.linalg.norm(slice_tensor.numpy().flatten('F')) / np.linalg.norm(
-                    noisy_slice.numpy().flatten('F') - slice_tensor.numpy().flatten('F')))
-                SNR.append(snr)
+                signal = np.linalg.norm(output[idx].flatten('F'))
+                noise = np.linalg.norm(output[idx].flatten('F') - target[idx].flatten('F'))
+                Signal.append(signal)
+                Noise.append(noise)
             output = batch_scale(output)
             target = batch_scale(target)
             cropp = batch_scale(cropp)
@@ -94,8 +96,12 @@ def main():
                 cv.imwrite(f'{args.experiment}/test_result/{image_id[j][:-4]}_{i%4}_target.png', target[i])
                 cv.imwrite(f'{args.experiment}/test_result/{image_id[j][:-4]}_{i % 4}_input.png', cropp[i])
 
+        Signal = np.array(signal)
+        Noise = np.array(noise)
+        SNR = 20*np.log10(Signal.mean()/Noise.mean())
+        print("The mean SNR over the test set is : {}".format(SNR))
         # save the metric
-        metrics = {"MSE_Loss": np.round(total_loss_val.average, 8)}
+        metrics = {"MSE_Loss": np.round(total_loss_val.average, 8), "SNR": SNR}
 
         with open(f'{args.experiment}/test_result/test.txt', 'w') as f:
             for k, v in list(metrics.items()):
