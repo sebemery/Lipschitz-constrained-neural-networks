@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_residual_None_0.05",
+    "experim_name": "DnCNN_residual_Normal_0.05",
     "seeds": [42],
     "sigma": 0.05,
 
@@ -11,7 +11,7 @@
         "kernel_size": 3,
         "padding": 1,
         "architecture": "residual",
-        "spectral_norm": "None"
+        "spectral_norm": "Normal"
     },
 
 
