@@ -12,7 +12,7 @@
         "padding": 1,
         "architecture": "residual",
         "spectral_norm": "Chen",
-        "beta": 1.0
+        "beta": 0.0001
     },
 
 
