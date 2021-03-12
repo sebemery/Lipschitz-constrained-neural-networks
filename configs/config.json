@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_residual_Perseval_0.05",
+    "experim_name": "DnCNN_residual_Chen_0.05_lr",
     "seeds": [42],
     "sigma": 0.05,
 
@@ -11,7 +11,7 @@
         "kernel_size": 3,
         "padding": 1,
         "architecture": "residual",
-        "spectral_norm": "Perseval",
+        "spectral_norm": "Chen",
         "beta": 0.0001
     },
 
@@ -19,7 +19,7 @@
     "optimizer": {
         "type": "Adam",
         "args":{
-            "lr": 1e-3,
+            "lr": 1e-4,
             "weight_decay": 0.0
         }
     },
