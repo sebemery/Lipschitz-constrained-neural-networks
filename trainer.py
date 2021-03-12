@@ -101,6 +101,9 @@ class Trainer:
             batch_loss = self.criterion(output, target)/batch_size
             batch_loss.backward()
             self.optimizer.step()
+            if self.config["model"]["spectral_norm"] == "Perseval":
+                with torch.no_grad():
+                    self.model.perseval_normalization(self.config["model"]["beta"])
             self._update_losses(batch_loss.detach().cpu().numpy())
             log = self._log_values()
 

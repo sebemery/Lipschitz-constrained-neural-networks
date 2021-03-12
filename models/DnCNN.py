@@ -26,7 +26,7 @@ class DnCNN(nn.Module):
                 layers.append(nn.ReLU(inplace=True))
             layers.append(utils.Spectral_Normalize.spectral_norm(nn.Conv2d(in_channels=n_channels, out_channels=image_channels, kernel_size=kernel_size, padding=padding)))
             self.dncnn = nn.Sequential(*layers)
-        elif spectral_norm == "None":
+        elif spectral_norm == "None" or "Perseval":
             layers.append(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding))
             layers.append(nn.ReLU(inplace=True))
             for _ in range(depth - 2):
@@ -43,3 +43,13 @@ class DnCNN(nn.Module):
         elif self.architecture == "direct":
             return out
 
+    def perseval_normalization(self, beta):
+        # access the weight kernels
+        for name, param in self.dncnn.named_parameters():
+            # check convolutional layer
+            if "weight" in name:
+                W = param.data
+                W_tmp = torch.reshape(W, (W.shape[0], (W.shape[2]*W.shape[3])*W.shape[1]))
+                W_tmp_T = torch.transpose(W_tmp, 0, 1)
+                W_new = (1+beta)*W_tmp - beta*torch.matmul(torch.matmul(W_tmp, W_tmp_T), W_tmp)
+                param.data = torch.reshape(W_new, (W.shape[0], W.shape[1], W.shape[2], W.shape[3]))
