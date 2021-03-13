@@ -55,10 +55,14 @@ class Trainer:
             self._resume_checkpoint(resume)
 
     def train(self):
+        MSE_loss_train = []
+        MSE_loss_val = []
         for epoch in range(self.start_epoch, self.epochs+1):
             results = self._train_epoch(epoch)
+            MSE_loss_train.append(results['mse_loss'])
             if epoch % self.config['trainer']['val_per_epochs'] == 0:
                 results = self._valid_epoch(epoch)
+                MSE_loss_val.append(results['mse_loss'])
                 self.logger.info('\n\n')
                 for k, v in results.items():
                     self.logger.info(f'{str(k):15s}: {v}')
@@ -76,6 +80,16 @@ class Trainer:
         self.html_results.save()
         self.writer.flush()
         self.writer.close()
+        MSE_loss_train = np.array([MSE_loss_train])
+        MSE_loss_val = np.array([MSE_loss_val])
+        plt.plot(MSE_loss_train, 'g', linewidth=2, label='Train loss')
+        epochs = np.arange(self.config["trainer"]["val_per_epochs"], self.config["trainer"]["epochs"], self.config["trainer"]["val_per_epochs"])
+        plt.plot(epochs, MSE_loss_val, 'r', linewidth=2, label='Validation loss')
+        plt.xlabel("epochs")
+        plt.ylabel("MSE Loss")
+        plt.title("Learning curves")
+        plt.savefig('curves.png')
+        plt.show()
 
     def _train_epoch(self, epoch):
         self.html_results.save()
