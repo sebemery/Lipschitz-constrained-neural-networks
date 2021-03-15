@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_residual_Perseval_0.05_SGD",
+    "experim_name": "DnCNN_residual_Perseval_0.05_Adam",
     "seeds": [42],
     "sigma": 0.05,
 
