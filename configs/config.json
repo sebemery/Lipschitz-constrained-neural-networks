@@ -20,7 +20,8 @@
         "type": "SGD",
         "args":{
             "lr": 1e-3,
-            "weight_decay": 0.0
+            "weight_decay": 0.0,
+            "momentum": 0.9
         }
     },
 
