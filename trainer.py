@@ -22,8 +22,12 @@ class Trainer:
         self.device = device
         if self.device != "cpu":
             self.model = self.model.to(device)
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=config["optimizer"]["args"]["lr"],
+        if config["optimizer"]["type"] == "Adam":
+            self.optimizer = torch.optim.Adam(self.model.parameters(), lr=config["optimizer"]["args"]["lr"],
                                           weight_decay=config["optimizer"]["args"]["weight_decay"])
+        elif config["optimizer"]["type"] == "SGD":
+            self.optimizer = torch.optim.SGD(self.model.parameters(), lr=config["optimizer"]["args"]["lr"],
+                                              weight_decay=config["optimizer"]["args"]["weight_decay"])
         self.criterion = torch.nn.MSELoss(reduction="sum")
         self.train_logger = train_logger
         self.logger = logging.getLogger(self.__class__.__name__)

@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_residual_Chen_deep17",
+    "experim_name": "DnCNN_residual_Perseval_0.05_SGD",
     "seeds": [42],
     "sigma": 0.05,
 
@@ -11,13 +11,13 @@
         "kernel_size": 3,
         "padding": 1,
         "architecture": "residual",
-        "spectral_norm": "Chen",
+        "spectral_norm": "Perseval",
         "beta": 0.0001
     },
 
 
     "optimizer": {
-        "type": "Adam",
+        "type": "SGD",
         "args":{
             "lr": 1e-3,
             "weight_decay": 0.0
@@ -28,7 +28,7 @@
     "train_loader": {
         "target_dir": "data/singlecoil_train_5_2_0.05/Target_tensors",
         "noise_dirs": ["data/singlecoil_train_5_2_0.05/Noise_tensors_1", "data/singlecoil_train_5_2_0.05/Noise_tensors_2"],
-        "batch_size": 10,
+        "batch_size": 25,
         "shuffle": true,
         "num_workers": 0
     },
@@ -37,7 +37,7 @@
     "val_loader": {
         "target_dir": "data/singlecoil_validation_5_1_0.05/Target_tensors",
         "noise_dirs": ["data/singlecoil_validation_5_1_0.05/Noise_tensors_1"],
-        "batch_size": 10,
+        "batch_size": 25,
         "shuffle": false,
         "num_workers": 0
     },
