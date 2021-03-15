@@ -5,7 +5,7 @@
     "sigma": 0.05,
 
     "model":{
-        "depth": 17,
+        "depth": 4,
         "n_channels": 64,
         "image_channels": 1,
         "kernel_size": 3,
