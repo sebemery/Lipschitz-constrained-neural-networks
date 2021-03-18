@@ -9,6 +9,7 @@ import cv2 as cv
 import models
 import dataloader
 from utils.metrics import AverageMeter
+from utils.ComputeSV import SingularValues
 import math
 
 
@@ -106,6 +107,16 @@ def main():
         with open(f'{args.experiment}/test_result/test.txt', 'w') as f:
             for k, v in list(metrics.items()):
                 f.write("%s\n" % (k + ':' + f'{v}'))
+
+        lipschitz_cte = SingularValues(model)
+        lipschitz_cte.compute_layer_sv()
+        merged_list = list(map(lambda x, y: (x, y), lipschitz_cte.names, lipschitz_cte.sigmas))
+        metrics = {"Layer": merged_list}
+
+        with open(f'{args.experiment}/test_result/sv.txt', 'w') as f:
+            for k, v in list(metrics.items()):
+                for t in v:
+                    f.write("%s\n" % (k + ':' + f'{t[0]}' + ':' + f'{t[1]}'))
 
 
 def parse_arguments():
