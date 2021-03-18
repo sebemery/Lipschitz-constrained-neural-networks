@@ -68,7 +68,7 @@ class SpectralNorm(object):
         # sigma = torch.sum(torch.matmul(u, conv2d(v, weight_mat, padding=1)))
         sigma = torch.sum(u * conv2d(v, weight_mat, padding=1))
         weight = weight / sigma
-        weight = weight * pow(0.3, 1.0/17.0)  # omit this (comment out) if lip constant = 1
+        # weight = weight * pow(0.3, 1.0/17.0)  # omit this (comment out) if lip constant = 1
         return weight, u
 
     def remove(self, module):

@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_residual_Perseval_0.05_Adam",
+    "experim_name": "DnCNN_residual_Chen_0.05",
     "seeds": [42],
     "sigma": 0.05,
 
@@ -11,7 +11,7 @@
         "kernel_size": 3,
         "padding": 1,
         "architecture": "residual",
-        "spectral_norm": "Perseval",
+        "spectral_norm": "Chen",
         "beta": 0.0001
     },
 
@@ -27,8 +27,8 @@
 
 
     "train_loader": {
-        "target_dir": "data/singlecoil_train_5_2_0.05/Target_tensors",
-        "noise_dirs": ["data/singlecoil_train_5_2_0.05/Noise_tensors_1", "data/singlecoil_train_5_2_0.05/Noise_tensors_2"],
+        "target_dir": "data/singlecoil_train_5_1_0.05/Target_tensors",
+        "noise_dirs": ["data/singlecoil_train_5_1_0.05/Noise_tensors_1", "data/singlecoil_train_5_1_0.05/Noise_tensors_2"],
         "batch_size": 25,
         "shuffle": true,
         "num_workers": 0
