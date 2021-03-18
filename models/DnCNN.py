@@ -72,7 +72,7 @@ class PersevalConv(nn.Module):
      A basic 2d convolution with output scaled for perseval networks
     """
 
-    def __init__(self, in_channels, out_channels, kernel_size,padding):
+    def __init__(self, in_channels, out_channels, kernel_size, padding):
         super(PersevalConv, self).__init__()
         self.conv = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, padding=padding)
         self.scale = 1/kernel_size
