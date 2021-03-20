@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_residual_Perseval_0.05_beta",
+    "experim_name": "DnCNN_residual_Perseval_0.05_beta2",
     "seeds": [42],
     "sigma": 0.05,
 
@@ -12,7 +12,7 @@
         "padding": 1,
         "architecture": "residual",
         "spectral_norm": "Perseval",
-        "beta": 0.1
+        "beta": 0.5
     },
 
 
