@@ -27,7 +27,6 @@ class SingularValues:
         self.names = []
 
     def compute_sigma(self, weight):
-        print(weight.shape)
         weight_mat = weight
 
         if weight_mat.shape[0] == 1:

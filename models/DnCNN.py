@@ -52,8 +52,10 @@ class DnCNN(nn.Module):
             return y-out
         elif self.architecture == "direct":
             return out
+        elif self.architecture == "halfaveraged":
+            return (y+out)/2.0
         else:
-            raise ValueError("The architecture specified is not provided choose : residual or direct")
+            raise ValueError("The architecture specified is not provided choose : residual, direct or halfaveraged")
 
     def perseval_normalization(self, beta):
         # access the weight kernels
