@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_residual_Perseval_0.05_beta3",
+    "experim_name": "DnCNN_halfaveraged_Chen_0.05",
     "seeds": [42],
     "sigma": 0.05,
 
@@ -10,8 +10,8 @@
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
-        "architecture": "residual",
-        "spectral_norm": "Perseval",
+        "architecture": "halfaveraged",
+        "spectral_norm": "Chen",
         "beta": 1.0
     },
 
