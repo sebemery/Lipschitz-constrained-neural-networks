@@ -19,7 +19,7 @@
     "optimizer": {
         "type": "Adam",
         "args":{
-            "lr": 1e-3,
+            "lr": 1e-4,
             "weight_decay": 0.0,
             "momentum": 0.9
         }
@@ -52,7 +52,7 @@
     },
 
     "trainer": {
-        "epochs": 600,
+        "epochs": 800,
         "save_dir": "saved/",
         "save_period": 25,
         
