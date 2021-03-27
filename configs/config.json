@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_halfaveraged_Perseval_0.05_0.7_1e-4",
+    "experim_name": "DnCNN_halfaveraged_Perseval_0.05_0.7_1e-5",
     "seeds": [42],
     "sigma": 0.05,
 
@@ -19,7 +19,7 @@
     "optimizer": {
         "type": "Adam",
         "args":{
-            "lr": 1e-4,
+            "lr": 1e-5,
             "weight_decay": 0.0,
             "momentum": 0.9
         }
@@ -52,7 +52,7 @@
     },
 
     "trainer": {
-        "epochs": 1200,
+        "epochs": 1500,
         "save_dir": "saved/",
         "save_period": 25,
         
