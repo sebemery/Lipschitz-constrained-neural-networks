@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_halfaveraged_Perseval_0.05_0.5_1e-4",
+    "experim_name": "DnCNN_halfaveraged_Perseval_0.05_0.7_1e-4",
     "seeds": [42],
     "sigma": 0.05,
 
@@ -12,7 +12,7 @@
         "padding": 1,
         "architecture": "halfaveraged",
         "spectral_norm": "Perseval",
-        "beta": 0.5
+        "beta": 0.7
     },
 
 
@@ -52,7 +52,7 @@
     },
 
     "trainer": {
-        "epochs": 800,
+        "epochs": 1200,
         "save_dir": "saved/",
         "save_period": 25,
         
