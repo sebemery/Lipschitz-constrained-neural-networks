@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_halfaveraged_Perseval_0.05_0.7_1e-6",
+    "experim_name": "DnCNN_halfaveraged_Perseval_0.05_0.7_1e-7",
     "seeds": [42],
     "sigma": 0.05,
 
@@ -19,7 +19,7 @@
     "optimizer": {
         "type": "Adam",
         "args":{
-            "lr": 1e-6,
+            "lr": 1e-7,
             "weight_decay": 0.0,
             "momentum": 0.9
         }
