@@ -21,3 +21,4 @@ data/singlecoil_val/
 data/singlecoil_validation/
 data/singlecoil_test/
 dummy.py
+PnP/*
