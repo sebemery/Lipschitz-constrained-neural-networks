@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN2_halfaveraged_Perseval_0.05_0.7_1e-5_SGD",
+    "experim_name": "DnCNN2_halfaveraged_Perseval_0.05_0.6_1e-5_SGD",
     "seeds": [42],
     "sigma": 0.05,
 
@@ -12,7 +12,7 @@
         "padding": 1,
         "architecture": "halfaveraged",
         "spectral_norm": "Perseval",
-        "beta": 0.7
+        "beta": 0.6
     },
 
 
