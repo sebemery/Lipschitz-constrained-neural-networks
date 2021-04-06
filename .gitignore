@@ -22,3 +22,4 @@ data/singlecoil_validation/
 data/singlecoil_test/
 dummy.py
 PnP/Denoisers/*
+PnP/Experiments/*
