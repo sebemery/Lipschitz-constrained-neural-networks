@@ -78,7 +78,7 @@ def pnp_admm_csmri(model, im_orig, mask, device, **opts):
 
         # pytorch denoising model
         xtilde_torch = np.reshape(xtilde, (1,1,m,n))
-        xtilde_torch = torch.from_numpy(xtilde_torch).type(torch.FloatTensor).cropp.to(device, non_blocking=True)
+        xtilde_torch = torch.from_numpy(xtilde_torch).type(torch.FloatTensor).to(device, non_blocking=True)
         x = model(xtilde_torch).cpu().numpy()
         x = np.reshape(x, (m, n))
 
@@ -96,6 +96,8 @@ def pnp_admm_csmri(model, im_orig, mask, device, **opts):
             snr.append(snr_tmp)
 
         inc.append(np.sqrt(np.sum((np.absolute(x - xold)) ** 2)))
+
+    x_init = np.real(x_init)
     if verbose:
         return x, inc, x_init, zero_fill_snr, snr
     else:
@@ -177,6 +179,7 @@ if __name__ == '__main__':
 
         # ---- load the ground truth ----
         im_orig = torch.load('CS_MRI/file1002252_2_bottomright.pt').numpy()
+        cv2.imwrite(f'{path}/GroundTruth.png', 255*im_orig)
 
         # ---- load mask matrix ----
         mask = torch.load('CS_MRI/Q_Random30.pt').numpy()
@@ -192,7 +195,7 @@ if __name__ == '__main__':
 
         # ---- print result -----
         out_snr = psnr(x_out, im_orig)
-        print('Plug-and-Play PNSR: ', snr)
+        print('Plug-and-Play PNSR: ', out_snr)
         metrics = {"PSNR": np.round(snr, 8), "Zero fill PSNR": np.round(zero_fill_snr, 8), }
 
         with open(f'{path}/snr.txt', 'w') as f:
@@ -210,7 +213,7 @@ if __name__ == '__main__':
 
         if args.verbose:
             fig, ax1 = plt.subplots()
-            ax1.plot(inc, 'b-', linewidth=1)
+            ax1.plot(snr, 'b-', linewidth=1)
             ax1.set_xlabel('iteration')
             ax1.set_ylabel('PSNR', color='b')
             ax1.set_title("PSNR curve")
