@@ -108,6 +108,8 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description='PyTorch Training')
     parser.add_argument('--config', default='configs/config.json', type=str, help='Path to the config file')
     parser.add_argument('--model', default=None, type=str, help='Path to the trained .pth model')
+    parser.add_argument('--img', default='CS_MRI/file1002252_2_bottomright.pt', type=str, help='Path to the original image')
+    parser.add_argument('--mask', default='CS_MRI/Q_Random30.pt', type=str, help='Path to the k-space mask file')
     parser.add_argument('--device', default="cpu", type=str, help='device location')
     parser.add_argument('--experiment', default=None, type=str, help='name of the experiment')
     parser.add_argument("--sigma", type=int, default=0.05, help="Noise level for the denoising model")
@@ -181,11 +183,11 @@ if __name__ == '__main__':
     with torch.no_grad():
 
         # ---- load the ground truth ----
-        im_orig = torch.load('CS_MRI/file1002252_2_bottomright.pt').numpy()
+        im_orig = torch.load(f'{args.img}').numpy()
         cv2.imwrite(f'{path}/GroundTruth.png', 255*im_orig)
 
         # ---- load mask matrix ----
-        mask = torch.load('CS_MRI/Q_Random30.pt').numpy()
+        mask = torch.load(f'{args.mask}').numpy()
 
         # ---- set options -----
         opts = dict(sigma=args.sigma, alpha=args.alpha, maxitr=args.maxitr, verbose=args.verbose)
