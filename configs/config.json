@@ -1,11 +1,11 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_residual_None_0.1_1e-3",
+    "experim_name": "DnCNN12_residual_None_0.1_1e-3",
     "seeds": [42],
     "sigma": 0.1,
 
     "model":{
-        "depth": 4,
+        "depth": 12,
         "n_channels": 64,
         "image_channels": 1,
         "kernel_size": 3,
@@ -52,7 +52,7 @@
     },
 
     "trainer": {
-        "epochs": 600,
+        "epochs": 1200,
         "save_dir": "saved/",
         "save_period": 25,
         
