@@ -15,7 +15,7 @@ def normalize(tensor, eps=1e-12):
 
 
 class SingularValues:
-    def __init__(self, model, n_power_iterations=1, dim=0, eps=1e-12):
+    def __init__(self, model, n_power_iterations=100, dim=0, eps=1e-12):
         self.model = model
         self.dim = dim
         if n_power_iterations <= 0:
