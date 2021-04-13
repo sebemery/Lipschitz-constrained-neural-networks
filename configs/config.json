@@ -1,16 +1,16 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN12_residual_None_0.1_1e-3",
+    "experim_name": "DnCNN_halfaveraged_None_0.05_1e-3",
     "seeds": [42],
-    "sigma": 0.1,
+    "sigma": 0.05,
 
     "model":{
-        "depth": 12,
+        "depth": 4,
         "n_channels": 64,
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
-        "architecture": "residual",
+        "architecture": "halfaveraged",
         "spectral_norm": "None",
         "beta": 0.6
     },
@@ -27,32 +27,32 @@
 
 
     "train_loader": {
-        "target_dir": "data/singlecoil_train_5_2_0.1/Target_tensors",
-        "noise_dirs": ["data/singlecoil_train_5_2_0.1/Noise_tensors_1", "data/singlecoil_train_5_2_0.1/Noise_tensors_2"],
-        "batch_size": 12,
+        "target_dir": "data/singlecoil_train_5_2_0.05/Target_tensors",
+        "noise_dirs": ["data/singlecoil_train_5_2_0.05/Noise_tensors_1", "data/singlecoil_train_5_2_0.05/Noise_tensors_2"],
+        "batch_size": 25,
         "shuffle": true,
         "num_workers": 0
     },
 
 
     "val_loader": {
-        "target_dir": "data/singlecoil_validation_5_1_0.1/Target_tensors",
-        "noise_dirs": ["data/singlecoil_validation_5_1_0.1/Noise_tensors_1"],
-        "batch_size": 12,
+        "target_dir": "data/singlecoil_validation_5_1_0.05/Target_tensors",
+        "noise_dirs": ["data/singlecoil_validation_5_1_0.05/Noise_tensors_1"],
+        "batch_size": 25,
         "shuffle": false,
         "num_workers": 0
     },
 
     "test_loader": {
-        "target_dir": "data/singlecoil_test_5_1_0.1/Target_tensors",
-        "noise_dirs": ["data/singlecoil_test_5_1_0.1/Noise_tensors_1"],
+        "target_dir": "data/singlecoil_test_5_1_0.05/Target_tensors",
+        "noise_dirs": ["data/singlecoil_test_5_1_0.05/Noise_tensors_1"],
         "batch_size": 1,
         "shuffle": false,
         "num_workers": 0
     },
 
     "trainer": {
-        "epochs": 1200,
+        "epochs": 600,
         "save_dir": "saved/",
         "save_period": 25,
         
