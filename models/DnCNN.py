@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 import utils
 from torch import nn
+import SplineActivations
 
 
 class DnCNN(nn.Module):
