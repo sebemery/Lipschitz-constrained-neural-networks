@@ -2,14 +2,14 @@ import torch
 from torch import nn
 from torch import Tensor
 
-from deepBspline import DeepBSpline
-from deepBspline_explicit_linear import DeepBSplineExplicitLinear
-from deepBspline_lipschitz_orthoprojection import DeepBSplineLipschitzOrthoProjection
-from deepBspline_lipschitz_maxprojection import DeepBSplineLipschitzMaxProjection
-from deepBspline_lipschitz_normalization import DeepBSplineLipschitzNormalization
-from deepRelu import DeepReLU
-from apl import APL
-from ds_utils import spline_grid_from_range
+from models.SplineActivations.deepBspline import DeepBSpline
+from models.SplineActivations.deepBspline_explicit_linear import DeepBSplineExplicitLinear
+# from models.SplineActivations.deepBspline_lipschitz_orthoprojection import DeepBSplineLipschitzOrthoProjection
+from models.SplineActivations.deepBspline_lipschitz_maxprojection import DeepBSplineLipschitzMaxProjection
+from models.SplineActivations.deepBspline_lipschitz_normalization import DeepBSplineLipschitzNormalization
+from models.SplineActivations.deepRelu import DeepReLU
+from models.SplineActivations.apl import APL
+from models.SplineActivations.ds_utils import spline_grid_from_range
 
 
 class BaseModel(nn.Module):

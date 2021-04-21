@@ -7,11 +7,12 @@ by dividing the coefficients by the maximum absolute slope (which is the Lipschi
 import torch
 from torch import nn
 from torch.nn import functional as F
-from models.deepBspline_base import DeepBSplineBase
+from models.SplineActivations.deepBspline_base import DeepBSplineBase
 from qpth.qp import QPFunction
 import cvxpy as cp
-from cvxpylayers.torch import CvxpyLayer
 import numpy as np
+# from cvxpylayers.torch import CvxpyLayer
+
 
 
 

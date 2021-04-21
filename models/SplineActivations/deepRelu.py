@@ -22,7 +22,7 @@ For more details, see deepspline_base.py
 import torch
 from torch import nn
 from torch.nn import functional as F
-from models.deepspline_base import DeepSplineBase
+from deepspline_base import DeepSplineBase
 
 
 

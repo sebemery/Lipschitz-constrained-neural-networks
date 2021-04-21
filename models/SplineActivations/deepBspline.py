@@ -4,7 +4,7 @@
 import torch
 from torch import nn
 from torch.nn import functional as F
-from models.deepBspline_base import DeepBSplineBase
+from models.SplineActivations.deepBspline_base import DeepBSplineBase
 
 
 
