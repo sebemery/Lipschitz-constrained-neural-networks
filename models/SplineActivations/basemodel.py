@@ -19,12 +19,12 @@ def spline_grid_from_range(spline_size, range_=2, round_to=1e-6):
 
 class BaseModel(nn.Module):
 
-    def __init__(self, config):
+    def __init__(self, config, device):
         """ """
         super().__init__()
 
         self.config = config["model"]
-
+        self.device = device
         self.set_attributes('activation_type')
         # deepspline
         self.set_attributes('spline_init', 'spline_size', 'spline_range', 'slope_diff_threshold')
@@ -168,13 +168,12 @@ class BaseModel(nn.Module):
     @property
     def weight_decay_regularization(self):
         """ boolean """
-        return ((self.hyperparam_tuning is True and self.params['lmbda'] > 0) or \
-                (self.params['weight_decay'] > 0))
+        return (self.hyperparam_tuning is True and self.config['lmbda'] > 0) or (self.config['weight_decay'] > 0)
 
     @property
     def tv_bv_regularization(self):
         """ boolean """
-        return (self.deepspline is not None and self.params['lmbda'] > 0)
+        return self.deepspline is not None and self.config['lmbda'] > 0
 
     def init_hyperparams(self):
         """ Initialize per layer hyperparameters based on constant lmbda,
@@ -195,10 +194,10 @@ class BaseModel(nn.Module):
                 if isinstance(module, nn.Conv2d) or isinstance(module, nn.Linear):
                     if self.deepspline is None or self.hyperparam_tuning is False:
                         # in this case, the hyperparameters will be the same for all layers.
-                        self.wd_hyperparam.append(self.params['weight_decay']/2)
+                        self.wd_hyperparam.append(self.config["weight_decay"]/2)
                     else:
                         weight_norm_sq = module.weight.data.pow(2).sum().item()
-                        self.wd_hyperparam.append(self.params['lmbda']/(2.0*weight_norm_sq))
+                        self.wd_hyperparam.append(self.config['lmbda']/(2.0*weight_norm_sq))
 
                 # elif self.apl is not None and isinstance(module, self.apl):
                     # self.apl_wd_hyperparam.append(self.params['beta']/2)
@@ -206,20 +205,18 @@ class BaseModel(nn.Module):
                 elif self.deepspline is not None and isinstance(module, self.deepspline):
                     if self.hyperparam_tuning is False:
                         # in this case, the hyperparameters will be the same for all layers.
-                        self.tv_bv_hyperparam.append(self.params['lmbda'])
+                        self.tv_bv_hyperparam.append(self.config['lmbda'])
                     else:
                         module_tv_bv = module.totalVariation()
-                        if self.params['lipschitz'] is True:
+                        if self.config['lipschitz'] is True:
                             module_tv_bv = module_tv_bv + module.fZerofOneAbs()
 
                         module_tv_bv_l1 = module_tv_bv.norm(p=1).item()
-                        self.tv_bv_hyperparam.append(self.params['lmbda']/module_tv_bv_l1)
+                        self.tv_bv_hyperparam.append(self.config['lmbda']/module_tv_bv_l1)
 
-
-        if self.params['verbose']:
-            print('\n\nHyperparameters:')
-            print('\nwd hyperparam :', self.wd_hyperparam, sep='\n')
-            print('\ntv/bv hyperparam :', self.tv_bv_hyperparam, sep='\n')
+        print('\n\nHyperparameters:')
+        print('\nwd hyperparam :', self.wd_hyperparam, sep='\n')
+        print('\ntv/bv hyperparam :', self.tv_bv_hyperparam, sep='\n')
 
     def weight_decay(self):
         """ Computes the total weight decay of the network.
@@ -232,16 +229,19 @@ class BaseModel(nn.Module):
         wd = Tensor([0.]).to(self.device)
 
         i = 0
-        for module in self.modules():
-            if hasattr(module, 'weight') and isinstance(module.weight, nn.Parameter):
-                if isinstance(module, nn.Conv2d) or isinstance(module, nn.Linear):
-                    wd = wd + self.wd_hyperparam[i] * module.weight.pow(2).sum()
-                    i += 1
-                else:
-                    wd = wd + self.params['weight_decay']/2 * module.weight.pow(2).sum()
+        for module in self.dncnn.modules():
+            if not isinstance(module, nn.Sequential):
+                if hasattr(module, 'weight_orig'):
+                    if isinstance(module.weight_orig, nn.Parameter):
+                        if isinstance(module, nn.Conv2d) or isinstance(module, nn.Linear):
+                            wd = wd + self.wd_hyperparam[i] * module.weight.pow(2).sum()
+                            i += 1
+                        else:
+                            wd = wd + self.config['weight_decay']/2 * module.weight.pow(2).sum()
 
-            if hasattr(module, 'bias') and isinstance(module.bias, nn.Parameter):
-                wd = wd + self.params['weight_decay']/2 * module.bias.pow(2).sum()
+                if hasattr(module, 'bias'):
+                    if isinstance(module.bias, nn.Parameter):
+                        wd = wd + self.config['weight_decay']/2 * module.bias.pow(2).sum()
 
         assert i == len(self.wd_hyperparam)
 
@@ -261,7 +261,7 @@ class BaseModel(nn.Module):
         for module in self.modules():
             if isinstance(module, self.deepspline):
                 module_tv_bv = module.totalVariation(mode='additive')
-                if self.params['lipschitz'] is True:
+                if self.config['lipschitz'] is True:
                     module_tv_bv = module_tv_bv + module.fZerofOneAbs(mode='additive')
 
                 tv_bv = tv_bv + self.tv_bv_hyperparam[i] * module_tv_bv.norm(p=self.outer_norm)

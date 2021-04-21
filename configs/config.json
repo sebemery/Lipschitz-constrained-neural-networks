@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_halfaveraged_Normal_0.05_1e-3",
+    "experim_name": "DnCNN_testspline_deepb_wd",
     "seeds": [42],
     "sigma": 0.05,
 
@@ -11,21 +11,24 @@
         "kernel_size": 3,
         "padding": 1,
         "architecture": "halfaveraged",
-        "spectral_norm": "Normal",
+        "spectral_norm": "Chen",
         "beta": 0.6,
-        "activation_type": "relu",
+        "activation_type": "deepBspline",
         "spline_init" : "relu",
         "spline_size": 51,
         "spline_range": 0.1,
         "slope_diff_threshold": 0,
         "sparsify_activations" : false,
         "hyperparam_tuning" : false,
-        "outer_norm" : 1
+        "lipschitz" : false,
+        "lmbda" : 1e-4,
+        "outer_norm" : 1,
+        "weight_decay" : 5e-4
     },
 
 
     "optimizer": {
-        "type": "Adam",
+        "type": ["Adam"],
         "args":{
             "lr": 1e-3,
             "weight_decay": 0.0,
@@ -35,8 +38,8 @@
 
 
     "train_loader": {
-        "target_dir": "data/singlecoil_train_5_2_0.05/Target_tensors",
-        "noise_dirs": ["data/singlecoil_train_5_2_0.05/Noise_tensors_1", "data/singlecoil_train_5_2_0.05/Noise_tensors_2"],
+        "target_dir": "data/train_dummy/target",
+        "noise_dirs": ["data/train_dummy/noise1", "data/train_dummy/noise2"],
         "batch_size": 25,
         "shuffle": true,
         "num_workers": 0
@@ -44,8 +47,8 @@
 
 
     "val_loader": {
-        "target_dir": "data/singlecoil_validation_5_1_0.05/Target_tensors",
-        "noise_dirs": ["data/singlecoil_validation_5_1_0.05/Noise_tensors_1"],
+        "target_dir": "data/val_dummy/target",
+        "noise_dirs": ["data/val_dummy/noise1"],
         "batch_size": 25,
         "shuffle": false,
         "num_workers": 0
@@ -60,15 +63,15 @@
     },
 
     "trainer": {
-        "epochs": 600,
+        "epochs": 20,
         "save_dir": "saved/",
-        "save_period": 25,
+        "save_period": 5,
         
         "tensorboardX": true,
         "log_dir": "saved/",
-        "log_per_iter": 100,
+        "log_per_iter": 20,
 
         "val": true,
-        "val_per_epochs": 25
+        "val_per_epochs": 5
     }
 }

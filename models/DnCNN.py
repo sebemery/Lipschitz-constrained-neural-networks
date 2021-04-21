@@ -5,8 +5,8 @@ from torch import nn
 from models.SplineActivations.basemodel import BaseModel
 
 class DnCNN(BaseModel):
-    def __init__(self, config, depth=7, n_channels=64, image_channels=1, kernel_size=3, padding=1, architecture="residual", spectral_norm ="Chen"):
-        super().__init__(config)
+    def __init__(self, config, depth=7, n_channels=64, image_channels=1, kernel_size=3, padding=1, architecture="residual", spectral_norm ="Chen", device="cpu"):
+        super().__init__(config,device)
         layers = []
         self.architecture = architecture
         self.activation = config["model"]["activation_type"]

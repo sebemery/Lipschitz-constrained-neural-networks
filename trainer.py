@@ -104,13 +104,13 @@ class Trainer:
         # losses
         Total_loss_train = []
         MSE_loss_val = []
+        self.model.init_hyperparams()
 
         # loop
         for epoch in range(self.start_epoch, self.epochs+1):
 
-            if epoch == (self.config['num_epochs']) and self.config["model"]["sparsify_activations"]:
-                print('\nLast epoch: freezing network for sparsifying the activations '
-                      'and evaluating training accuracy.')
+            if epoch == self.epochs and self.config["model"]["sparsify_activations"]:
+                print('\nLast epoch: freezing network for sparsifying the activations and evaluating training accuracy.')
                 self.model.eval()  # set network in evaluation mode
                 self.model.sparsify_activations()
                 self.model.freeze_parameters()
@@ -174,20 +174,21 @@ class Trainer:
 
             # data fidelity
             data_fidelity = self.criterion(output, target)/batch_size
-            data_fidelity.backward()
+            data_fidelity.backward(retain_graph=True)
 
             # regularization
             regularization = torch.zeros_like(data_fidelity)
             if self.model.weight_decay_regularization is True:
                 # the regularization weight is multiplied inside weight_decay()
-                regularization = regularization + self.net.weight_decay()
+                regularization = regularization + self.model.weight_decay()
 
             if self.model.tv_bv_regularization is True:
                 # the regularization weight is multiplied inside TV_BV()
-                tv_bv, tv_bv_unweighted = self.net.TV_BV()
+                tv_bv, tv_bv_unweighted = self.model.TV_BV()
                 regularization = regularization + tv_bv
                 # losses.append(tv_bv_unweighted)
-            regularization.backward()
+            if (self.model.weight_decay_regularization is True) or (self.model.tv_bv_regularization is True):
+                regularization.backward()
             total_loss = data_fidelity + regularization
 
             self.optimizer_step()
