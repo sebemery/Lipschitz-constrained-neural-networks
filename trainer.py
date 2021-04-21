@@ -22,13 +22,7 @@ class Trainer:
         self.device = device
         if self.device != "cpu":
             self.model = self.model.to(device)
-        if config["optimizer"]["type"] == "Adam":
-            self.optimizer = torch.optim.Adam(self.model.parameters(), lr=config["optimizer"]["args"]["lr"],
-                                          weight_decay=config["optimizer"]["args"]["weight_decay"])
-        elif config["optimizer"]["type"] == "SGD":
-            self.optimizer = torch.optim.SGD(self.model.parameters(), lr=config["optimizer"]["args"]["lr"],
-                                             momentum=config["optimizer"]["args"]["momentum"],
-                                             weight_decay=config["optimizer"]["args"]["weight_decay"])
+        self.set_optimization()
         self.criterion = torch.nn.MSELoss(reduction="sum")
         self.train_logger = train_logger
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -59,10 +53,68 @@ class Trainer:
         if resume:
             self._resume_checkpoint(resume)
 
+    def set_optimization(self):
+        """ """
+        self.optim_names = self.config["optimizer"]["type"]
+
+        # main optimizer/scheduler
+        if len(self.optim_names) == 2:
+            try:
+                # main optimizer only for network parameters
+                main_params_iter = self.model.parameters_no_deepspline_apl()
+            except AttributeError:
+                print('Cannot use aux optimizer.')
+                raise
+        else:
+            # single optimizer for all parameters
+            main_params_iter = self.model.parameters()
+
+        self.main_optimizer = self.construct_optimizer(main_params_iter, self.optim_names[0], 'main')
+
+        self.aux_optimizer = None
+
+        if len(self.optim_names) == 2:
+            # aux optimizer/scheduler for deepspline/apl parameters
+            try:
+                if self.model.deepspline is not None:
+                    aux_params_iter = self.model.parameters_deepspline()
+                # elif self.net.apl is not None:
+                    # aux_params_iter = self.net.parameters_apl()
+            except AttributeError:
+                print('Cannot use aux optimizer.')
+                raise
+
+            self.aux_optimizer = self.construct_optimizer(aux_params_iter, self.optim_names[1], 'aux')
+
+    def construct_optimizer(self, params_iter, optim_name, mode='main'):
+        """ """
+        lr = self.config["optimizer"]["args"]["lr"] if mode == 'main' else self.config["optimizer"]["args"]["lr"]
+
+        # weight decay is added manually
+        if optim_name == 'Adam':
+            optimizer = torch.optim.Adam(params_iter, lr=lr)
+        elif optim_name == 'SGD':
+            optimizer = torch.optim.SGD(params_iter, lr=lr, momentum=0.9, nesterov=True)
+        else:
+            raise ValueError('Need to provide a valid optimizer type')
+
+        return optimizer
+
     def train(self):
+        # losses
         MSE_loss_train = []
         MSE_loss_val = []
+
+        # loop
         for epoch in range(self.start_epoch, self.epochs+1):
+
+            if epoch == (self.config['num_epochs']) and self.config["model"]["sparsify_activations"]:
+                print('\nLast epoch: freezing network for sparsifying the activations '
+                      'and evaluating training accuracy.')
+                self.model.eval()  # set network in evaluation mode
+                self.model.sparsify_activations()
+                self.model.freeze_parameters()
+
             results = self._train_epoch(epoch)
             MSE_loss_train.append(results['mse_loss'])
             if epoch % self.config['trainer']['val_per_epochs'] == 0:
@@ -115,28 +167,61 @@ class Trainer:
             if self.device != 'cpu':
                 cropp, target = cropp.to(self.device, non_blocking=True), target.to(self.device, non_blocking=True)
 
-            self.optimizer.zero_grad()
+            self.optimizer_zero_grad()
 
             batch_size = cropp.shape[0]
             output = self.model(cropp)
 
-            batch_loss = self.criterion(output, target)/batch_size
-            batch_loss.backward()
-            self.optimizer.step()
+            # data fidelity
+            data_fidelity = self.criterion(output, target)/batch_size
+            data_fidelity.backward()
+
+            # regularization
+            regularization = torch.zeros_like(data_fidelity)
+            if self.model.weight_decay_regularization is True:
+                # the regularization weight is multiplied inside weight_decay()
+                regularization = regularization + self.net.weight_decay()
+
+            if self.model.tv_bv_regularization is True:
+                # the regularization weight is multiplied inside TV_BV()
+                tv_bv, tv_bv_unweighted = self.net.TV_BV()
+                regularization = regularization + tv_bv
+                # losses.append(tv_bv_unweighted)
+            regularization.backward()
+            total_loss = data_fidelity + regularization
+
+            self.optimizer_step()
             if self.config["model"]["spectral_norm"] == "Perseval":
                 with torch.no_grad():
                     self.model.perseval_normalization(self.config["model"]["beta"])
-            self._update_losses(batch_loss.detach().cpu().numpy())
+            self._update_losses(total_loss.detach().cpu().numpy())
             log = self._log_values()
 
             if batch_idx % self.log_step == 0:
                 self.wrt_step = (epoch - 1) * len(self.train_loader) + batch_idx
                 self._write_scalars_tb(log)
 
-            del batch_loss, output
+            del total_loss, output
 
-            tbar.set_description('T ({}) | MSELoss {:.3f} |'.format(epoch, self.total_mse_loss.average))
+            tbar.set_description('T ({}) | TotalLoss {:.3f} |'.format(epoch, self.total_mse_loss.average))
         return log
+
+    def optimizer_zero_grad(self):
+        """ """
+        self.main_optimizer.zero_grad()
+        if self.aux_optimizer is not None:
+            self.aux_optimizer.zero_grad()
+
+    def optimizer_step(self):
+        """ """
+        self.main_optimizer.step()
+        if self.aux_optimizer is not None:
+            self.aux_optimizer.step()
+
+        # Do the projection step to constrain the Lipschitz constant to 1
+        if ((self.model.activation_type == 'deepBspline_lipschitz_orthoprojection') or (self.model.activation_type == 'deepBspline_lipschitz_maxprojection')):
+            for module in self.model.modules_deepspline():
+                module.do_lipschitz_projection()
 
     def _valid_epoch(self, epoch):
         if self.val_loader is None:

@@ -12,7 +12,15 @@
         "padding": 1,
         "architecture": "halfaveraged",
         "spectral_norm": "Normal",
-        "beta": 0.6
+        "beta": 0.6,
+        "activation_type": "relu",
+        "spline_init" : "relu",
+        "spline_size": 51,
+        "spline_range": 0.1,
+        "slope_diff_threshold": 0,
+        "sparsify_activations" : false,
+        "hyperparam_tuning" : false,
+        "outer_norm" : 1
     },
 
 

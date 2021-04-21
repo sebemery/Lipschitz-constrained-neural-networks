@@ -22,7 +22,7 @@ def main(config, resume, device):
     for seed in config["seeds"]:
         torch.manual_seed(seed)
         torch.cuda.manual_seed(seed)
-        model = models.DnCNN(depth=config["model"]["depth"], n_channels=config["model"]["n_channels"],
+        model = models.DnCNN(config, depth=config["model"]["depth"], n_channels=config["model"]["n_channels"],
                              image_channels=config["model"]["image_channels"], kernel_size=config["model"]["kernel_size"],
                              padding=config["model"]["padding"], architecture=config["model"]["architecture"],
                              spectral_norm=config["model"]["spectral_norm"])
