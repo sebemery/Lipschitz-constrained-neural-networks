@@ -102,7 +102,7 @@ class Trainer:
 
     def train(self):
         # losses
-        MSE_loss_train = []
+        Total_loss_train = []
         MSE_loss_val = []
 
         # loop
@@ -116,7 +116,7 @@ class Trainer:
                 self.model.freeze_parameters()
 
             results = self._train_epoch(epoch)
-            MSE_loss_train.append(results['mse_loss'])
+            Total_loss_train.append(results['mse_loss'])
             if epoch % self.config['trainer']['val_per_epochs'] == 0:
                 results = self._valid_epoch(epoch)
                 MSE_loss_val.append(results['val_loss'])
@@ -137,12 +137,12 @@ class Trainer:
         self.html_results.save()
         self.writer.flush()
         self.writer.close()
-        MSE_loss_train = np.array(MSE_loss_train)
+        Total_loss_train = np.array(Total_loss_train)
         MSE_loss_val = np.array(MSE_loss_val)
         epochs = np.arange(self.config["trainer"]["val_per_epochs"], self.config["trainer"]["epochs"] + self.config["trainer"]["val_per_epochs"], self.config["trainer"]["val_per_epochs"])
         fig, ax1 = plt.subplots()
         ax2 = ax1.twinx()
-        ax1.plot(MSE_loss_train, 'g-',  linewidth=1)
+        ax1.plot(Total_loss_train, 'g-',  linewidth=1)
         ax2.plot(epochs, MSE_loss_val, 'b-', linewidth=1)
         ax1.set_xlabel('epochs')
         ax1.set_ylabel('Train loss', color='g')
