@@ -11,6 +11,7 @@ import numpy as np
 import torch.nn.functional as F
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import pdb
 
 
 class Trainer:
@@ -22,6 +23,7 @@ class Trainer:
         self.device = device
         if self.device != "cpu":
             self.model = self.model.to(device)
+        pdb.set_trace()
         self.set_optimization()
         self.criterion = torch.nn.MSELoss(reduction="sum")
         self.train_logger = train_logger
