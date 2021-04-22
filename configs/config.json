@@ -13,7 +13,7 @@
         "architecture": "halfaveraged",
         "spectral_norm": "Chen",
         "beta": 0.6,
-        "activation_type": "deepBspline",
+        "activation_type": "relu",
         "spline_init" : "relu",
         "spline_size": 51,
         "spline_range": 0.1,
