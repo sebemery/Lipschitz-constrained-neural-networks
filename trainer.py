@@ -24,7 +24,6 @@ class Trainer:
         if self.device != "cpu":
             self.model = self.model.to(device)
         print(self.model.get_num_params())
-        pdb.set_trace()
         self.set_optimization()
         self.criterion = torch.nn.MSELoss(reduction="sum")
         self.train_logger = train_logger
@@ -173,6 +172,7 @@ class Trainer:
             self.optimizer_zero_grad()
 
             batch_size = cropp.shape[0]
+            pdb.set_trace()
             output = self.model(cropp)
 
             # data fidelity
