@@ -174,7 +174,7 @@ class Trainer:
 
             # data fidelity
             data_fidelity = self.criterion(output, target)/batch_size
-            data_fidelity.backward(retain_graph=True)
+            # data_fidelity.backward(retain_graph=True)
 
             # regularization
             regularization = torch.zeros_like(data_fidelity)
@@ -187,10 +187,9 @@ class Trainer:
                 tv_bv, tv_bv_unweighted = self.model.TV_BV()
                 regularization = regularization + tv_bv
                 # losses.append(tv_bv_unweighted)
-            if (self.model.weight_decay_regularization is True) or (self.model.tv_bv_regularization is True):
-                regularization.backward()
-            total_loss = data_fidelity + regularization
 
+            total_loss = data_fidelity + regularization
+            total_loss.backward()
             self.optimizer_step()
             if self.config["model"]["spectral_norm"] == "Perseval":
                 with torch.no_grad():
