@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_halfaveraged_Chen_0.05_spline_",
+    "experim_name": "DnCNN_halfaveraged_Chen_0.05_Bspline",
     "seeds": [42],
     "sigma": 0.05,
 
