@@ -172,7 +172,6 @@ class Trainer:
             self.optimizer_zero_grad()
 
             batch_size = cropp.shape[0]
-            pdb.set_trace()
             output = self.model(cropp)
 
             # data fidelity
