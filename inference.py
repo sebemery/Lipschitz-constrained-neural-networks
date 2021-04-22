@@ -115,13 +115,14 @@ def main():
         activation = config["model"]["activation_type"]
         if (activation != "relu") or (activation != "leaky_relu") or (activation != "prelu"):
             C = model.lipschtiz_exact()
-            spline ={}
+            spline = {}
             for i in range(len(C)):
                 spline[f"activation_{i}"] = C[i]
 
             with open(f'{args.experiment}/test_result/ActivationSlopes.txt', 'w') as f:
                 for k, v in list(spline.items()):
                     f.write("%s\n" % (k + ':' + f'{v}'))
+                    torch.save(v, f"{args.experiment}/test_result/{k}.pt")
 
         with open(f'{args.experiment}/test_result/sv.txt', 'w') as f:
             for k, v in list(metrics.items()):
