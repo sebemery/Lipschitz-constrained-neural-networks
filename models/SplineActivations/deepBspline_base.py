@@ -157,7 +157,27 @@ class DeepBSplineBase(DeepSplineBase):
 
         return slopes
 
+    def lipschitz_slope(self):
+        """ Get the slopes
+        by doing a valid convolution of the coefficients {c_k}
+        with the first-order finite-difference filter [1,-1].
+        """
+        # F.conv1d():
+        # out(i, 1, :) = self.D2_filter(1, 1, :) *conv* coefficients(i, 1, :)
+        # out.size() = (num_activations, 1, filtered_activation_size)
+        # after filtering, we remove the singleton dimension
+        slopes = F.conv1d(self.coefficients.unsqueeze(1), self.D1_filter).squeeze(1)
+        slopes = abs(slopes)
+        slope_1 = []
+        for i in range(self.coefficients.shape[0]):
+            slope_2 = []
+            for j in range(1, self.coefficients.shape[1]):
+                slope_2.append(abs(self.coefficients[i, j]-self.coefficients[i, j-1]))
 
+            slope_1.append(slope_2)
+        slopes_loop = torch.from_numpy(np.array(slope_1, dtype="float64"))
+        slopes_loop = slopes_loop/self.grid
+        return slopes.float(), slopes_loop.float()
 
     def reshape_forward(self, input):
         """ """

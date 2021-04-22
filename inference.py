@@ -112,6 +112,16 @@ def main():
         lipschitz_cte.compute_layer_sv()
         merged_list = list(map(lambda x, y: (x, y), lipschitz_cte.names, lipschitz_cte.sigmas))
         metrics = {"Layer": merged_list}
+        activation = config["model"]["activation_type"]
+        if (activation != "relu") or (activation != "leaky_relu") or (activation != "prelu"):
+            C = model.lipschtiz_exact()
+            spline ={}
+            for i in range(len(C)):
+                spline[f"activation_{i}"] = C[i]
+
+            with open(f'{args.experiment}/test_result/ActivationSlopes.txt', 'w') as f:
+                for k, v in list(spline.items()):
+                    f.write("%s\n" % (k + ':' + f'{v}'))
 
         with open(f'{args.experiment}/test_result/sv.txt', 'w') as f:
             for k, v in list(metrics.items()):

@@ -306,6 +306,22 @@ class BaseModel(nn.Module):
 
         return lip_bound[0] # 1-element 1d tensor -> 0d tensor
 
+    def lipschtiz_exact(self):
+        """
+        Compute the lipschitz constant C :
+        ||f_deep(x_1) - f_deep(x_2)||_2 <= C ||x_1 - x_2||_2,
+        for all x_1, x_2 \in R^{N_0}.
+
+        For piecewise linear activation C is the maximum slope
+        """
+        C = []
+        for module in self.modules():
+            if isinstance(module, self.deepspline):
+                activations_lip_1, activations_lip_2 = module.lipschitz_slope()
+                activations_lip, _ = torch.max(activations_lip_1, dim=1)
+                C.append(activations_lip)
+        return C
+
     def sparsify_activations(self):
         """ Sparsifies the deepspline activations, eliminating the slope
         changes smaller than a threshold.

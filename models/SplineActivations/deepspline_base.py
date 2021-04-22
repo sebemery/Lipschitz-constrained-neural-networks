@@ -145,6 +145,10 @@ class DeepSplineBase(ABC, nn.Module):
         """ Slopes of activations """
         pass
 
+    def lipschitz_slope(self):
+        """ Lipschitz constant of activations """
+        pass
+
 
     def totalVariation(self, **kwargs):
         """ Computes the total variation regularization: l1 norm of ReLU coefficients
@@ -153,6 +157,7 @@ class DeepSplineBase(ABC, nn.Module):
         The regularization term applied to this function is:
         TV(2)(deepsline) = ||a||_1
         """
+
         return self.slopes.norm(1, dim=1)
 
 
