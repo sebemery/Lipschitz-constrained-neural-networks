@@ -15,7 +15,7 @@ class DnCNN(BaseModel):
         if spectral_norm == "Chen":
             layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding)))
             if self.activation == "relu":
-                layers.append(nn.ReLU())
+                layers.append(nn.ReLU(inplace=True))
             elif self.activation == "leaky_relu":
                 layers.append(nn.LeakyReLU(inplace=True))
             elif self.activation == "prelu":
@@ -25,7 +25,7 @@ class DnCNN(BaseModel):
             for _ in range(depth - 2):
                 layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding)))
                 if self.activation == "relu":
-                    layers.append(nn.ReLU())
+                    layers.append(nn.ReLU(inplace=True))
                 elif self.activation == "leaky_relu":
                     layers.append(nn.LeakyReLU(inplace=True))
                 elif self.activation == "prelu":
