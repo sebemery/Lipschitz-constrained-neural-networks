@@ -14,8 +14,6 @@ import numpy as np
 # from cvxpylayers.torch import CvxpyLayer
 
 
-
-
 class DeepBSplineLipschitzMaxProjection(DeepBSplineBase):
     """ See deepBspline_base.py
     """
