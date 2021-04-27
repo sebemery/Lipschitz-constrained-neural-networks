@@ -62,19 +62,19 @@ def main():
 
     if config["model"]["activation_type"] != "deepBspline":
         start_time = time.time()
-        model.do_lipschitz_projection()
+        model_QP.do_lipschitz_projection()
         t = time.time() - start_time
         print("--- %s seconds ---" % t)
         with open(f'{args.experiment}/QP_result/time.txt', 'w') as f:
             f.write("%s\n" % ('Time :' + f'{t}'))
 
-    lipschitz_cte = SingularValues(model)
+    lipschitz_cte = SingularValues(model_QP)
     lipschitz_cte.compute_layer_sv()
     merged_list = list(map(lambda x, y: (x, y), lipschitz_cte.names, lipschitz_cte.sigmas))
     metrics = {"Layer": merged_list}
     activation = config["model"]["activation_type"]
     if (activation != "relu") or (activation != "leaky_relu") or (activation != "prelu"):
-        C = model.lipschtiz_exact()
+        C = model_QP.lipschtiz_exact()
         spline = {}
         for i in range(len(C)):
             spline[f"activation_{i}"] = C[i]
