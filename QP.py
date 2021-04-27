@@ -46,8 +46,8 @@ def main():
         print(f'Some modules are missing: {e}')
         model.load_state_dict(checkpoint['state_dict'], strict=False)
 
-    for name, param in enumerate(model.dncnn.named_parameters()):
-        for name_QP, param_QP in enumerate(model_QP.dncnn.named_parameters()):
+    for name, param in model.dncnn.named_parameters():
+        for name_QP, param_QP in model_QP.dncnn.named_parameters():
             param_QP.data = param.data
 
     model.float()
