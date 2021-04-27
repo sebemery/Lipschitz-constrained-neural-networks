@@ -18,12 +18,19 @@ def main():
     config = json.load(open(args.config))
     if args.activation:
         config["model"]["activation_type"] = args.activation
-    print(config["model"]["activation_type"])
     # MODEL
     model = models.DnCNN(config, depth=config["model"]["depth"], n_channels=config["model"]["n_channels"],
                          image_channels=config["model"]["image_channels"], kernel_size=config["model"]["kernel_size"],
                          padding=config["model"]["padding"], architecture=config["model"]["architecture"],
                          spectral_norm=config["model"]["spectral_norm"], device=args.device)
+
+    if args.activation:
+        config["model"]["activation_type"] = args.activation
+
+    model_QP = models.DnCNN(config, depth=config["model"]["depth"], n_channels=config["model"]["n_channels"],
+                            image_channels=config["model"]["image_channels"], kernel_size=config["model"]["kernel_size"],
+                            padding=config["model"]["padding"], architecture=config["model"]["architecture"],
+                            spectral_norm=config["model"]["spectral_norm"], device=args.device)
     device = args.device
     checkpoint = torch.load(args.model, device)
 
@@ -38,6 +45,8 @@ def main():
     except Exception as e:
         print(f'Some modules are missing: {e}')
         model.load_state_dict(checkpoint['state_dict'], strict=False)
+    for name, param in model.dncnn.named_parameters():
+        print(name)
     model.float()
     model.eval()
     if args.device != 'cpu':
