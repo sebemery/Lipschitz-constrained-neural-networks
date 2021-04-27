@@ -3,6 +3,7 @@ from torch import nn
 from torch import Tensor
 from models.SplineActivations.deepBspline import DeepBSpline
 from models.SplineActivations.deepBspline_lipschitz_maxprojection import DeepBSplineLipschitzMaxProjection
+from models.SplineActivations.deepBspline_lipschitz_orthoprojection import DeepBSplineLipschitzOrthoProjection
 
 
 def spline_grid_from_range(spline_size, range_=2, round_to=1e-6):
@@ -38,6 +39,8 @@ class BaseModel(nn.Module):
             self.deepspline = DeepBSpline
         elif self.activation_type == 'deepBspline_lipschitz_maxprojection':
             self.deepspline = DeepBSplineLipschitzMaxProjection
+        elif self.activation_type == 'deepBspline_lipschitz_orthoprojection':
+            self.deepspline = DeepBSplineLipschitzOrthoProjection
 
     def set_attributes(self, *names):
         """ """

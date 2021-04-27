@@ -109,8 +109,6 @@ class DeepBSplineLipschitzOrthoProjection(DeepBSplineBase):
 
         self.qp = CvxpyLayer(problem, parameters=[p], variables=[x])
 
-
-
     def do_lipschitz_projection(self):
         """
         Perform the Lipschitz projection step by solving the QP
@@ -127,11 +125,9 @@ class DeepBSplineLipschitzOrthoProjection(DeepBSplineBase):
             proj_coefficients, = self.qp(-2.0*self.coefficients.data)
             self.coefficients_vect_.data = proj_coefficients.view(-1)
 
-
     @staticmethod
     def parameter_names(**kwargs):
         yield 'coefficients_vect'
-
 
     def forward(self, input):
         """
@@ -141,7 +137,6 @@ class DeepBSplineLipschitzOrthoProjection(DeepBSplineBase):
         output = super().forward(input)
 
         return output
-
 
     def extra_repr(self):
         """ repr for print(model)
