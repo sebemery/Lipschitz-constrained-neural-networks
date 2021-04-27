@@ -11,6 +11,7 @@ class DnCNN(BaseModel):
         layers = []
         self.architecture = architecture
         self.activation = config["model"]["activation_type"]
+        print(self.activation)
 
         if spectral_norm == "Chen":
             layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding)))
