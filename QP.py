@@ -45,9 +45,11 @@ def main():
     except Exception as e:
         print(f'Some modules are missing: {e}')
         model.load_state_dict(checkpoint['state_dict'], strict=False)
-    for name, param in model.dncnn.named_parameters():
-        if "coefficient_vect" in name:
-            print(model.dncnn[name])
+
+    for layer in model.dncnn:
+        print(layer)
+        #  if "coefficient_vect" in name:
+            # print(model.dncnn.parameters()[name])
 
     model.float()
     model.eval()
