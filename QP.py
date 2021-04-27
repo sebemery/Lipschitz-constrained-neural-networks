@@ -62,7 +62,8 @@ def main():
 
     if config["model"]["activation_type"] != "deepBspline":
         start_time = time.time()
-        model_QP.do_lipschitz_projection()
+        for module in model_QP.modules_deepspline():
+            module.do_lipschitz_projection()
         t = time.time() - start_time
         print("--- %s seconds ---" % t)
         with open(f'{args.experiment}/QP_result/time.txt', 'w') as f:
