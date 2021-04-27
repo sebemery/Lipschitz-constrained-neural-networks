@@ -7,7 +7,7 @@ via quadratic programming.
 import torch
 from torch import nn
 from torch.nn import functional as F
-from models.deepBspline_base import DeepBSplineBase
+from models.SplineActivations.deepBspline_base import DeepBSplineBase
 from qpth.qp import QPFunction
 import cvxpy as cp
 from cvxpylayers.torch import CvxpyLayer
