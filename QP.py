@@ -46,7 +46,9 @@ def main():
         print(f'Some modules are missing: {e}')
         model.load_state_dict(checkpoint['state_dict'], strict=False)
     for name, param in model.dncnn.named_parameters():
-        print(name)
+        if "coefficient_vect" in name:
+            print(model.dncnn[name])
+
     model.float()
     model.eval()
     if args.device != 'cpu':
