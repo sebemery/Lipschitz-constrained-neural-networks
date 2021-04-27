@@ -46,15 +46,19 @@ def main():
         print(f'Some modules are missing: {e}')
         model.load_state_dict(checkpoint['state_dict'], strict=False)
 
-    for i, param in enumerate(model.dncnn.parameters()):
-        print(param)
-        #  if "coefficient_vect" in name:
-            # print(model.dncnn.parameters()[name])
+    for name, param in enumerate(model.dncnn.named_parameters()):
+        for name_QP, param_QP in enumerate(model_QP.dncnn.named_parameters()):
+            param_QP.data = param.data
 
     model.float()
     model.eval()
     if args.device != 'cpu':
         model.to(device)
+
+    model_QP.float()
+    model_QP.eval()
+    if args.device != 'cpu':
+        model_QP.to(device)
 
     if config["model"]["activation_type"] != "deepBspline":
         start_time = time.time()
