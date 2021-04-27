@@ -46,8 +46,8 @@ def main():
         print(f'Some modules are missing: {e}')
         model.load_state_dict(checkpoint['state_dict'], strict=False)
 
-    for i, layer in enumerate(model.dncnn):
-        print(layer.parameters)
+    for i, param in enumerate(model.dncnn.parameters()):
+        print(param)
         #  if "coefficient_vect" in name:
             # print(model.dncnn.parameters()[name])
 
