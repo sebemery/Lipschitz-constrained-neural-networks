@@ -47,7 +47,7 @@ def main():
         model.load_state_dict(checkpoint['state_dict'], strict=False)
 
     for i, layer in enumerate(model.dncnn):
-        print(layer)
+        print(layer.parameters)
         #  if "coefficient_vect" in name:
             # print(model.dncnn.parameters()[name])
 
