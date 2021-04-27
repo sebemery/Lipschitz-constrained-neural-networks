@@ -16,8 +16,8 @@ def main():
     # CONFIG -> assert if config is here
     assert args.config
     config = json.load(open(args.config))
-    if args.activation_type:
-        config["model"]["activation_type"] = args.activation_type
+    if args.activation:
+        config["model"]["activation_type"] = args.activation
     # MODEL
     model = models.DnCNN(config, depth=config["model"]["depth"], n_channels=config["model"]["n_channels"],
                          image_channels=config["model"]["image_channels"], kernel_size=config["model"]["kernel_size"],
