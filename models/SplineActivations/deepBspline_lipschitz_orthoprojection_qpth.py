@@ -7,12 +7,12 @@ via quadratic programming.
 import torch
 from torch import nn
 from torch.nn import functional as F
+from torch.autograd import Variable
 from models.SplineActivations.deepBspline_base import DeepBSplineBase
 from qpth.qp import QPFunction
 import cvxpy as cp
 from cvxpylayers.torch import CvxpyLayer
 import numpy as np
-
 
 
 class DeepBSplineLipschitzOrthoProjection(DeepBSplineBase):
@@ -60,18 +60,16 @@ class DeepBSplineLipschitzOrthoProjection(DeepBSplineBase):
         # Setup the matrices for quadratic programming
         self.init_QP()
 
-
     @property
     def coefficients_vect_(self):
         return self.coefficients_vect
-
 
     def init_QP(self):
         """
         Setting up the matrices Q, G, h for the QP
         """
 
-        """ Using the qpth library for the QP
+        # using the qpth library
         self.Q = 2.0*torch.eye(self.size, self.size, device=self.device)
         self.e = torch.Tensor()
         self.e = (self.e).to(device=self.device)
@@ -85,45 +83,17 @@ class DeepBSplineLipschitzOrthoProjection(DeepBSplineBase):
 
         self.G = torch.cat([D, -D], dim=0)
         self.h = torch.ones(2*(self.size-1), device=self.device)
-        """
-
-        # Using the cvxpylayers library for the QP
-        Q = 2.0*np.eye(self.size)
-        p = cp.Parameter(self.size)
-
-        # Create the finite-difference matrix
-        D = np.zeros([self.size-1, self.size])
-        size = self.grid.item()
-        for i in range(self.size-1):
-            D[i, i] = -1.0/size
-            D[i, i+1] = 1.0/size
-
-        G = np.concatenate((D, -D), axis=0)
-        h = np.ones(2*(self.size-1))
-
-        # Create the QP
-        x = cp.Variable(self.size)
-        objective = cp.Minimize((1/2)*cp.quad_form(x, Q) + p.T @ x)
-        constraints = [G @ x <= h]
-        problem = cp.Problem(objective, constraints)
-
-        self.qp = CvxpyLayer(problem, parameters=[p], variables=[x])
 
     def do_lipschitz_projection(self):
         """
         Perform the Lipschitz projection step by solving the QP
         """
 
-        """ qpth library
+        # qpth library
         with torch.no_grad():
             proj_coefficients = QPFunction(verbose=False)(nn.Parameter(self.Q), -2.0*self.coefficients, nn.Parameter(self.G), nn.Parameter(self.h), nn.Parameter(self.e), nn.Parameter(self.e))
             self.coefficients_vect_.data = proj_coefficients.view(-1)
-        """
 
-        # cvxpylayers library
-        with torch.no_grad():
-            proj_coefficients, = self.qp(-2.0*self.coefficients.data)
-            self.coefficients_vect_.data = proj_coefficients.view(-1)
 
     @staticmethod
     def parameter_names(**kwargs):
