@@ -133,6 +133,9 @@ class DeepBSplineBase(DeepSplineBase):
     def coefficients(self):
         """ B-spline coefficients.
         """
+        print(self.coefficients_vect_.shape)
+        print(self.num_activations)
+        print(self.size)
         return self.coefficients_vect_.view(self.num_activations, self.size)
 
 

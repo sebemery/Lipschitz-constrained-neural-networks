@@ -49,8 +49,6 @@ def main():
     for name, param in model.dncnn.named_parameters():
         for name_QP, param_QP in model_QP.dncnn.named_parameters():
             param_QP.data = param.data
-            if "coefficients_vect" in name :
-                print(param.data.shape)
 
     model.float()
     model.eval()
