@@ -69,60 +69,60 @@ class DeepBSplineLipschitzOrthoProjection(DeepBSplineBase):
         """
         Setting up the matrices Q, G, h for the QP
         """
+        if self.QP == "qpth":
+            # Using the qpth library for the QP
+            self.Q = 2.0*torch.eye(self.size, self.size, device=self.device)
+            self.e = torch.Tensor()
+            self.e = (self.e).to(device=self.device)
 
-        """ Using the qpth library for the QP
-        self.Q = 2.0*torch.eye(self.size, self.size, device=self.device)
-        self.e = torch.Tensor()
-        self.e = (self.e).to(device=self.device)
+            # Create the finite-difference matrix
+            T = self.grid.item()
+            D = torch.zeros(self.size-1, self.size, device=self.device)
+            for i in range(self.size-1):
+                D[i, i] = -1.0/T
+                D[i, i+1] = 1.0/T
 
-        # Create the finite-difference matrix
-        T = self.grid.item()
-        D = torch.zeros(self.size-1, self.size, device=self.device)
-        for i in range(self.size-1):
-            D[i, i] = -1.0/T
-            D[i, i+1] = 1.0/T
+            self.G = torch.cat([D, -D], dim=0)
+            self.h = torch.ones(2*(self.size-1), device=self.device)
 
-        self.G = torch.cat([D, -D], dim=0)
-        self.h = torch.ones(2*(self.size-1), device=self.device)
-        """
+        elif self.QP == "cvxpy":
+            # Using the cvxpylayers library for the QP
+            Q = 2.0*np.eye(self.size)
+            p = cp.Parameter(self.size)
 
-        # Using the cvxpylayers library for the QP
-        Q = 2.0*np.eye(self.size)
-        p = cp.Parameter(self.size)
+            # Create the finite-difference matrix
+            D = np.zeros([self.size-1, self.size])
+            size = self.grid.item()
+            for i in range(self.size-1):
+                D[i, i] = -1.0/size
+                D[i, i+1] = 1.0/size
 
-        # Create the finite-difference matrix
-        D = np.zeros([self.size-1, self.size])
-        size = self.grid.item()
-        for i in range(self.size-1):
-            D[i, i] = -1.0/size
-            D[i, i+1] = 1.0/size
+            G = np.concatenate((D, -D), axis=0)
+            h = np.ones(2*(self.size-1))
 
-        G = np.concatenate((D, -D), axis=0)
-        h = np.ones(2*(self.size-1))
+            # Create the QP
+            x = cp.Variable(self.size)
+            objective = cp.Minimize((1/2)*cp.quad_form(x, Q) + p.T @ x)
+            constraints = [G @ x <= h]
+            problem = cp.Problem(objective, constraints)
 
-        # Create the QP
-        x = cp.Variable(self.size)
-        objective = cp.Minimize((1/2)*cp.quad_form(x, Q) + p.T @ x)
-        constraints = [G @ x <= h]
-        problem = cp.Problem(objective, constraints)
-
-        self.qp = CvxpyLayer(problem, parameters=[p], variables=[x])
+            self.qp = CvxpyLayer(problem, parameters=[p], variables=[x])
 
     def do_lipschitz_projection(self):
         """
         Perform the Lipschitz projection step by solving the QP
         """
 
-        """ qpth library
         with torch.no_grad():
-            proj_coefficients = QPFunction(verbose=False)(nn.Parameter(self.Q), -2.0*self.coefficients, nn.Parameter(self.G), nn.Parameter(self.h), nn.Parameter(self.e), nn.Parameter(self.e))
-            self.coefficients_vect_.data = proj_coefficients.view(-1)
-        """
+            if self.QP == "qpth":
+                # qpth library
+                proj_coefficients = QPFunction(verbose=False)(nn.Parameter(self.Q), -2.0*self.coefficients, nn.Parameter(self.G), nn.Parameter(self.h), nn.Parameter(self.e), nn.Parameter(self.e))
+                self.coefficients_vect_.data = proj_coefficients.view(-1)
 
-        # cvxpylayers library
-        with torch.no_grad():
-            proj_coefficients, = self.qp(-2.0*self.coefficients.data)
-            self.coefficients_vect_.data = proj_coefficients.view(-1)
+            elif self.QP == "cvxpy":
+                # cvxpylayers library
+                proj_coefficients, = self.qp(-2.0*self.coefficients.data)
+                self.coefficients_vect_.data = proj_coefficients.view(-1)
 
     @staticmethod
     def parameter_names(**kwargs):

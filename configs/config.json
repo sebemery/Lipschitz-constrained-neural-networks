@@ -14,6 +14,7 @@
         "spectral_norm": "Chen",
         "beta": 0.6,
         "activation_type": "deepBspline_lipschitz_maxprojection",
+        "QP": "cvxpy",
         "spline_init" : "relu",
         "spline_size": 51,
         "spline_range": 0.1,

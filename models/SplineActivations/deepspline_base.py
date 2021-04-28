@@ -22,7 +22,7 @@ class DeepSplineBase(ABC, nn.Module):
     """
     def __init__(self, mode='conv', size=51, grid=0.1, num_activations=None,
                 init='leaky_relu', device='cuda:0',
-                dtype=torch.float32, **kwargs):
+                dtype=torch.float32, QP = "cvxpy", **kwargs):
 
         if mode not in ['conv', 'linear']:
             raise ValueError('Mode should be either "conv" or "linear".')
@@ -40,6 +40,7 @@ class DeepSplineBase(ABC, nn.Module):
         self.device = device
         self.dtype = dtype
         self.grid = Tensor([grid]).to(**self.device_type)
+        self.QP = QP
 
         self.init_P()
         self.init_P_inv()
