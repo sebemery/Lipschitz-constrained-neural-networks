@@ -48,8 +48,8 @@ def main():
 
     for name, param in model.dncnn.named_parameters():
         for name_QP, param_QP in model_QP.dncnn.named_parameters():
-            print(name)
-            print(name_QP)
+            print("Model : {} ".format(name))
+            print("Model_QP : {}".format(name_QP))
             param_QP.data = param.data
 
     model.float()
