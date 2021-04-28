@@ -61,6 +61,8 @@ def main():
     if args.device != 'cpu':
         model_QP.to(device)
 
+    check_directory(args.experiment)
+
     if config["model"]["activation_type"] != "deepBspline":
         start_time = time.time()
         for module in model_QP.modules_deepspline():
