@@ -1,19 +1,19 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_halfaveraged_Chen_0.05_Bspline_MaxProj",
+    "experim_name": "DnCNN_deep_halfaveraged_Chen_0.05_Bspline",
     "seeds": [42],
     "sigma": 0.05,
 
     "model":{
-        "depth": 4,
-        "n_channels": 64,
+        "depth": 8,
+        "n_channels": 128,
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
         "architecture": "halfaveraged",
         "spectral_norm": "Chen",
         "beta": 0.6,
-        "activation_type": "deepBspline_lipschitz_maxprojection",
+        "activation_type": "deepBspline",
         "QP": "cvxpy",
         "spline_init" : "relu",
         "spline_size": 51,
@@ -64,15 +64,15 @@
     },
 
     "trainer": {
-        "epochs": 600,
+        "epochs": 25,
         "save_dir": "saved/",
-        "save_period": 25,
+        "save_period": 5,
         
         "tensorboardX": true,
         "log_dir": "saved/",
-        "log_per_iter": 100,
+        "log_per_iter": 20,
 
         "val": true,
-        "val_per_epochs": 25
+        "val_per_epochs": 5
     }
 }
