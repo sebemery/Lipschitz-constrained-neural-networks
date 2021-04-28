@@ -16,8 +16,7 @@ def main():
     # CONFIG -> assert if config is here
     assert args.config
     config = json.load(open(args.config))
-    if args.activation:
-        config["model"]["activation_type"] = args.activation
+
     # MODEL
     model = models.DnCNN(config, depth=config["model"]["depth"], n_channels=config["model"]["n_channels"],
                          image_channels=config["model"]["image_channels"], kernel_size=config["model"]["kernel_size"],
@@ -26,6 +25,8 @@ def main():
 
     if args.activation:
         config["model"]["activation_type"] = args.activation
+    if args.QP:
+        config["model"]["QP"] = args.QP
 
     model_QP = models.DnCNN(config, depth=config["model"]["depth"], n_channels=config["model"]["n_channels"],
                             image_channels=config["model"]["image_channels"], kernel_size=config["model"]["kernel_size"],
@@ -69,7 +70,7 @@ def main():
             module.do_lipschitz_projection()
         t = time.time() - start_time
         print("--- %s seconds ---" % t)
-        with open(f'{args.experiment}/QP_result/time.txt', 'w') as f:
+        with open(f'{args.experiment}/QP_result/{args.QP}_time.txt', 'w') as f:
             f.write("%s\n" % ('Time :' + f'{t}'))
 
     lipschitz_cte = SingularValues(model_QP)
@@ -83,12 +84,12 @@ def main():
         for i in range(len(C)):
             spline[f"activation_{i}"] = C[i]
 
-        with open(f'{args.experiment}/QP_result/ActivationSlopes.txt', 'w') as f:
+        with open(f'{args.experiment}/QP_result/{args.QP}_ActivationSlopes.txt', 'w') as f:
             for k, v in list(spline.items()):
                 f.write("%s\n" % (k + ':' + f'{v}'))
-                torch.save(v, f"{args.experiment}/QP_result/{k}.pt")
+                torch.save(v, f"{args.experiment}/QP_result/{args.QP}_{k}.pt")
 
-    with open(f'{args.experiment}/QP_result/sv.txt', 'w') as f:
+    with open(f'{args.experiment}/QP_result/{args.QP}_sv.txt', 'w') as f:
         for k, v in list(metrics.items()):
             for t in v:
                 f.write("%s\n" % (k + ':' + f'{t[0]}' + ':' + f'{t[1]}'))
@@ -106,6 +107,8 @@ def parse_arguments():
                         help='path to the folder experiment')
     parser.add_argument('--activation', default="deepBspline_lipschitz_orthoprojection", type=str,
                         help='type of activation used')
+    parser.add_argument('--QP', default="cvxpy", type=str,
+                        help='quadratic proggraming library')
     args = parser.parse_args()
     return args
 
