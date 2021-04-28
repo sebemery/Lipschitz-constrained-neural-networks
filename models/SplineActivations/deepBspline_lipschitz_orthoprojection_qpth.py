@@ -14,6 +14,7 @@ from cvxpylayers.torch import CvxpyLayer
 import numpy as np
 
 
+
 class DeepBSplineLipschitzOrthoProjection(DeepBSplineBase):
     """ See deepBspline_base.py
     """
