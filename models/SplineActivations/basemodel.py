@@ -69,7 +69,7 @@ class BaseModel(nn.Module):
             for mode, num_activations in activation_specs:
                 activations.append(self.deepspline(size=size, grid=grid, init=self.spline_init,
                                             bias=False, mode=mode, num_activations=num_activations, #bias=bias
-                                            device=self.device, QP =self.QP))
+                                            device=self.device, QP=self.QP))
         else:
             activations = self.init_standard_activations(activation_specs)
 
