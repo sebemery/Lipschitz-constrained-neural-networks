@@ -93,7 +93,7 @@ class SpectralNorm(object):
         fn = SpectralNorm(name, n_power_iterations, dim, eps)
         weight = module._parameters[name]
         height = weight.size(dim)
-
+        print(weight.shape)
         # u = normalize(weight.new_empty(height).normal_(0, 1), dim=0, eps=fn.eps)
         if module.weight.shape[0] == 1:
             C_out = 1
