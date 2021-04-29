@@ -32,7 +32,7 @@ class SingularValues:
         if weight_mat.shape[0] == 1:
             C_out = 1
         else:
-            C_out = 64
+            C_out = weight_mat.shape[0]
 
         u = normalize(weight.new_empty(1, C_out, 40, 40).normal_(0, 1), eps=self.eps)
 
