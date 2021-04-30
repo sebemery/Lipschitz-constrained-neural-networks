@@ -121,12 +121,16 @@ class DeepBSplineLipschitzOrthoProjection(DeepBSplineBase):
 
             elif self.QP == "cvxpy":
                 # cvxpylayers library
+                """
+                # row_wise verification 
                 proj_coefficients = torch.empty(self.coefficients.data.shape)
                 for i in range(self.coefficients.data.shape[0]):
                     proj_coefficient, = self.qp(-2.0*self.coefficients.data[i, :])
                     proj_coefficients[i, :] = proj_coefficient
                 self.coefficients_vect_.data = proj_coefficients.view(-1)
-
+                """
+                proj_coefficients, = self.qp(-2.0 * self.coefficients.data)
+                self.coefficients_vect_.data = proj_coefficients.view(-1)
     @staticmethod
     def parameter_names(**kwargs):
         yield 'coefficients_vect'
