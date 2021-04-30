@@ -84,8 +84,8 @@ def main():
             target = np.squeeze(target, axis=1)
             cropp = np.squeeze(cropp, axis=1)
             for idx in range(batch_size):
-                signal = np.linalg.norm(output[idx].flatten('F'))
-                noise = np.linalg.norm(output[idx].flatten('F') - target[idx].flatten('F'))
+                signal = np.linalg.norm(target[idx].flatten())
+                noise = np.linalg.norm(output[idx].flatten() - target[idx].flatten())
                 Signal.append(signal)
                 Noise.append(noise)
             output = batch_scale(output)
@@ -97,8 +97,8 @@ def main():
                 cv.imwrite(f'{args.experiment}/test_result/{image_id[j][:-4]}_{i%4}_target.png', target[i])
                 cv.imwrite(f'{args.experiment}/test_result/{image_id[j][:-4]}_{i % 4}_input.png', cropp[i])
 
-        Signal = np.array(signal)
-        Noise = np.array(noise)
+        Signal = np.asarray(Signal)
+        Noise = np.asarray(Noise)
         SNR = 20*np.log10(Signal.mean()/Noise.mean())
         print("The mean SNR over the test set is : {}".format(SNR))
         # save the metric
@@ -113,7 +113,7 @@ def main():
         merged_list = list(map(lambda x, y: (x, y), lipschitz_cte.names, lipschitz_cte.sigmas))
         metrics = {"Layer": merged_list}
         activation = config["model"]["activation_type"]
-        if (activation != "relu") or (activation != "leaky_relu") or (activation != "prelu"):
+        if (activation != "relu") and (activation != "leaky_relu") and (activation != "prelu"):
             C = model.lipschtiz_exact()
             spline = {}
             for i in range(len(C)):
