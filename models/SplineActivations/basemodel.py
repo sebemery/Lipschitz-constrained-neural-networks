@@ -3,7 +3,7 @@ from torch import nn
 from torch import Tensor
 from models.SplineActivations.deepBspline import DeepBSpline
 from models.SplineActivations.deepBspline_lipschitz_maxprojection import DeepBSplineLipschitzMaxProjection
-# from models.SplineActivations.deepBspline_lipschitz_orthoprojection import DeepBSplineLipschitzOrthoProjection
+from models.SplineActivations.deepBspline_lipschitz_orthoprojection import DeepBSplineLipschitzOrthoProjection
 
 
 def spline_grid_from_range(spline_size, range_=2, round_to=1e-6):
@@ -39,8 +39,8 @@ class BaseModel(nn.Module):
             self.deepspline = DeepBSpline
         elif self.activation_type == 'deepBspline_lipschitz_maxprojection':
             self.deepspline = DeepBSplineLipschitzMaxProjection
-        # elif self.activation_type == 'deepBspline_lipschitz_orthoprojection':
-            # self.deepspline = DeepBSplineLipschitzOrthoProjection
+        elif self.activation_type == 'deepBspline_lipschitz_orthoprojection':
+            self.deepspline = DeepBSplineLipschitzOrthoProjection
 
     def set_attributes(self, *names):
         """ """
@@ -318,12 +318,14 @@ class BaseModel(nn.Module):
         For piecewise linear activation C is the maximum slope
         """
         C = []
+        slope = []
         for module in self.modules():
             if isinstance(module, self.deepspline):
                 activations_lip_1, activations_lip_2 = module.lipschitz_slope()
                 activations_lip, _ = torch.max(activations_lip_1, dim=1)
                 C.append(activations_lip)
-        return C
+                slope.append(activations_lip_1)
+        return C, slope
 
     def sparsify_activations(self):
         """ Sparsifies the deepspline activations, eliminating the slope
