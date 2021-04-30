@@ -81,8 +81,10 @@ def main():
     if (activation != "relu") or (activation != "leaky_relu") or (activation != "prelu"):
         C, slope = model_QP.lipschtiz_exact()
         spline = {}
+        splineAll = {}
         for i in range(len(C)):
             spline[f"activation_{i}"] = C[i]
+            splineAll[f"activation_{i}"] = slope[i]
 
         with open(f'{args.experiment}/QP_result/{args.QP}_ActivationSlopes.txt', 'w') as f:
             for k, v in list(spline.items()):
@@ -90,7 +92,7 @@ def main():
                 torch.save(v, f"{args.experiment}/QP_result/{args.QP}_{k}.pt")
 
         with open(f'{args.experiment}/QP_result/{args.QP}_ActivationSlopesAll.txt', 'w') as f:
-            for k, v in list(spline.items()):
+            for k, v in list(splineAll.items()):
                 f.write("%s\n" % (k + ':' + f'{v}'))
                 torch.save(v, f"{args.experiment}/QP_result/{args.QP}_{k}_All.pt")
 
