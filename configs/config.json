@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_halfaveraged_Chen_0.05_Bspline_shared2",
+    "experim_name": "DnCNN_halfaveraged_Chen_0.05_Bsplineortho_shared2",
     "seeds": [42],
     "sigma": 0.05,
 
@@ -13,7 +13,7 @@
         "architecture": "halfaveraged",
         "spectral_norm": "Chen",
         "beta": 0.6,
-        "activation_type": "deepBspline",
+        "activation_type": "deepBspline_lipschitz_orthoprojection",
         "shared_activation": true,
         "shared_channels": true,
         "QP": "cvxpy",
