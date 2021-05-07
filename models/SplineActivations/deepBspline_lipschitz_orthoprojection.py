@@ -140,6 +140,14 @@ class DeepBSplineLipschitzOrthoProjection(DeepBSplineBase):
         Args:
             input : 2D/4D tensor
         """
+        if self.shared_channels is True:
+            b, c, h, w = input.shape
+            new_dim = int(np.sqrt(c * h * w))
+            input_reshaped = torch.reshape(input, (b, 1, new_dim, new_dim))
+            output_reshaped = super().forward(input_reshaped)
+            output = torch.reshape(output_reshaped, (b, c, h, w))
+            return output
+
         output = super().forward(input)
 
         return output

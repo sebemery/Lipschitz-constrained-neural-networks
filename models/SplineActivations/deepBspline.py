@@ -5,6 +5,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from models.SplineActivations.deepBspline_base import DeepBSplineBase
+import numpy as np
 
 
 
@@ -50,26 +51,31 @@ class DeepBSpline(DeepBSplineBase):
         # Need to vectorize coefficients to perform specific operations
         self.coefficients_vect = nn.Parameter(coefficients.contiguous().view(-1)) # size: (num_activations*size)
 
-
     @property
     def coefficients_vect_(self):
         return self.coefficients_vect
 
-    
     @staticmethod
     def parameter_names(**kwargs):
         yield 'coefficients_vect'
-
 
     def forward(self, input):
         """
         Args:
             input : 2D/4D tensor
         """
+
+        if self.shared_channels is True:
+            b, c, h, w = input.shape
+            new_dim = int(np.sqrt(c*h*w))
+            input_reshaped = torch.reshape(input, (b, 1, new_dim, new_dim))
+            output_reshaped = super().forward(input_reshaped)
+            output = torch.reshape(output_reshaped, (b, c, h, w))
+            return output
+
         output = super().forward(input)
 
         return output
-
 
     def extra_repr(self):
         """ repr for print(model)

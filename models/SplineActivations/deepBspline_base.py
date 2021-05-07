@@ -197,14 +197,12 @@ class DeepBSplineBase(DeepSplineBase):
 
         return x
 
-
     def reshape_back(self, output, input_size):
         """ """
         if self.mode == 'linear':
             output = output.view(*input_size) # transform back to 2D size (N, num_units)
 
         return output
-
 
     def forward(self, input):
         """
@@ -213,7 +211,7 @@ class DeepBSplineBase(DeepSplineBase):
         """
         input_size = input.size()
         x = self.reshape_forward(input)
-        assert x.size(1) == self.num_activations, 'input.size(1) != num_activations.'
+        # assert x.size(1) == self.num_activations, 'input.size(1) != num_activations.'
 
         # Linear extrapolations:
         # f(x_left) = leftmost coeff value + left_slope * (x - leftmost coeff)
@@ -238,8 +236,6 @@ class DeepBSplineBase(DeepSplineBase):
 
         return output
 
-
-
     def reset_first_coefficients_grad(self):
         """ """
         first_knots_indexes = torch.cat((self.zero_knot_indexes - self.size//2,
@@ -251,8 +247,6 @@ class DeepBSplineBase(DeepSplineBase):
             raise AssertionError('First coefficients are not zero...')
 
         self.coefficients_vect_.grad[first_knots_indexes] = zeros
-
-
 
     def apply_threshold(self, threshold):
         """ See DeepSplineBase.apply_threshold method

@@ -113,16 +113,24 @@ def main():
         merged_list = list(map(lambda x, y: (x, y), lipschitz_cte.names, lipschitz_cte.sigmas))
         metrics = {"Layer": merged_list}
         activation = config["model"]["activation_type"]
+        QP = config["model"]["QP"]
         if (activation != "relu") and (activation != "leaky_relu") and (activation != "prelu"):
-            C = model.lipschtiz_exact()
+            C, slope = model.lipschtiz_exact()
             spline = {}
+            splineAll = {}
             for i in range(len(C)):
                 spline[f"activation_{i}"] = C[i]
+                splineAll[f"activation_{i}"] = slope[i]
 
-            with open(f'{args.experiment}/test_result/ActivationSlopes.txt', 'w') as f:
+            with open(f'{args.experiment}/test_result/{QP}_ActivationSlopes.txt', 'w') as f:
                 for k, v in list(spline.items()):
                     f.write("%s\n" % (k + ':' + f'{v}'))
-                    torch.save(v, f"{args.experiment}/test_result/{k}.pt")
+                    torch.save(v, f"{args.experiment}/test_result/{QP}_{k}.pt")
+
+            with open(f'{args.experiment}/test_result/{QP}_ActivationSlopesAll.txt', 'w') as f:
+                for k, v in list(splineAll.items()):
+                    f.write("%s\n" % (k + ':' + f'{v}'))
+                    torch.save(v, f"{args.experiment}/test_result/{QP}_{k}_All.pt")
 
         with open(f'{args.experiment}/test_result/sv.txt', 'w') as f:
             for k, v in list(metrics.items()):

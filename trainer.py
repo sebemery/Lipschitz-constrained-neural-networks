@@ -167,10 +167,9 @@ class Trainer:
             cropp = torch.cat([cropp1, cropp2, cropp3, cropp4, cropp5, cropp6, cropp7, cropp8], dim=0)
             target = torch.cat([target1, target2, target3, target4, target1, target2, target3, target4], dim=0)
             if self.device != 'cpu':
-                cropp, target = cropp.to(self.device,non_blocking=True), target.to(self.device, non_blocking=True)
+                cropp, target = cropp.to(self.device, non_blocking=True), target.to(self.device, non_blocking=True)
 
             self.optimizer_zero_grad()
-
             batch_size = cropp.shape[0]
             output = self.model(cropp)
 

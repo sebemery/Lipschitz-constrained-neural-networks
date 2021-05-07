@@ -26,7 +26,7 @@ class BaseModel(nn.Module):
 
         self.config = config["model"]
         self.device = device
-        self.set_attributes('activation_type', 'QP')
+        self.set_attributes('activation_type', 'QP', 'shared_channels')
         # deepspline
         self.set_attributes('spline_init', 'spline_size', 'spline_range', 'slope_diff_threshold')
         # regularization
@@ -69,7 +69,7 @@ class BaseModel(nn.Module):
             for mode, num_activations in activation_specs:
                 activations.append(self.deepspline(size=size, grid=grid, init=self.spline_init,
                                             bias=False, mode=mode, num_activations=num_activations, #bias=bias
-                                            device=self.device, QP=self.QP))
+                                            device=self.device, QP=self.QP, shared_channels=self.shared_channels))
         else:
             activations = self.init_standard_activations(activation_specs)
 
