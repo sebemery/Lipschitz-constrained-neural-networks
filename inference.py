@@ -30,7 +30,9 @@ def main():
     model = models.DnCNN(config, depth=config["model"]["depth"], n_channels=config["model"]["n_channels"],
                          image_channels=config["model"]["image_channels"], kernel_size=config["model"]["kernel_size"],
                          padding=config["model"]["padding"], architecture=config["model"]["architecture"],
-                         spectral_norm=config["model"]["spectral_norm"], device=args.device)
+                         spectral_norm=config["model"]["spectral_norm"],
+                         shared_activation=config["model"]["shared_activation"],
+                         shared_channels=config["model"]["shared_channels"], device=args.device)
     device = args.device
     checkpoint = torch.load(args.model, device)
     criterion = torch.nn.MSELoss(reduction="sum")
