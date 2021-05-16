@@ -2,6 +2,8 @@
     "name": "DnCNN",
     "experim_name": "DnCNN_halfaveraged_Chen_0.05_BsplineMaxProj_shared2",
     "seeds": [42],
+    "data": "fastMRI",
+    "preprocessing": false,
     "sigma": 0.05,
 
     "model":{

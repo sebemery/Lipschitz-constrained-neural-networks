@@ -20,6 +20,9 @@ data/singlecoil_train/
 data/singlecoil_val/
 data/singlecoil_validation/
 data/singlecoil_test/
+data/Set12/
+data/Set68/
+data/train_BSD500/
 dummy.py
 PnP/Denoisers/*
 PnP/Experiments/*
