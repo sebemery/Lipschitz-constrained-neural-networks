@@ -81,7 +81,7 @@ def prepare_data(patch_size, stride, aug_times=1):
 
 
 def data_augmentation(image, mode):
-    out = np.transpose(image, (1,2,0))
+    out = np.transpose(image, (1, 2, 0))
     if mode == 0:
         # original
         out = out
