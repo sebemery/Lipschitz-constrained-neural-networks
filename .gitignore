@@ -23,6 +23,8 @@ data/singlecoil_test/
 data/Set12/
 data/Set68/
 data/train_BSD500/
+data/train_BSD500_preprocessed/
+data/val_BSD500_preprocessed/
 dummy.py
 PnP/Denoisers/*
 PnP/Experiments/*
