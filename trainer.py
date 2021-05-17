@@ -25,6 +25,7 @@ class Trainer:
             self.model = self.model.to(device)
         print(self.model.get_num_params())
         self.set_optimization()
+        self.scheduler = torch.optim.lr_scheduler.StepLR(self.main_optimizer, step_size=25, gamma=0.1)
         self.criterion = torch.nn.MSELoss(reduction="sum")
         self.train_logger = train_logger
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -205,6 +206,9 @@ class Trainer:
             del total_loss, output
 
             tbar.set_description('T ({}) | TotalLoss {:.3f} |'.format(epoch, self.total_mse_loss.average))
+
+        self.scheduler.step(epoch)
+
         return log
 
     def optimizer_zero_grad(self):
