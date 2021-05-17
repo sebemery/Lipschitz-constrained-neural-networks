@@ -147,6 +147,7 @@ class Trainer:
         self.html_results.save()
         self.writer.flush()
         self.writer.close()
+        print(self.scheduler.get_last_lr())
         Total_loss_train = np.array(Total_loss_train)
         MSE_loss_val = np.array(MSE_loss_val)
         if self.config["dataset"] == "BSD500":
@@ -233,7 +234,7 @@ class Trainer:
 
         if self.config["dataset"] == "BSD500":
             self.scheduler.step(epoch)
-
+        print(self.scheduler.get_last_lr())
         return log
 
     def optimizer_zero_grad(self):

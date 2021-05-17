@@ -15,8 +15,8 @@ class BSD500(Dataset):
         self.data_dir = data_dir
         self.noise = noise
         data_file = os.listdir(self.data_dir)
-        data_path = os.path.join(self.data_dir, data_file[0])
-        h5f = h5py.File(data_path, 'r')
+        self.data_path = os.path.join(self.data_dir, data_file[0])
+        h5f = h5py.File(self.data_path, 'r')
         self.keys = list(h5f.keys())
         random.shuffle(self.keys)
         h5f.close()
@@ -25,7 +25,7 @@ class BSD500(Dataset):
         return len(self.keys)
 
     def __getitem__(self, index):
-        h5f = h5py.File(self.data_dir, 'r')
+        h5f = h5py.File(self.data_path, 'r')
         key = self.keys[index]
         data = torch.Tensor(np.array(h5f[key]))
         noise = torch.FloatTensor(data.size()).normal_(mean=0, std=self.noise / 255.)

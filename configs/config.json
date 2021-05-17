@@ -43,7 +43,7 @@
 
 
     "train_loader": {
-        "target_dir": "data/train_BSD500_preprocesed",
+        "target_dir": "data/train_BSD500_preprocessed",
         "noise_dirs": ["data/singlecoil_train_5_2_0.05/Noise_tensors_1", "data/singlecoil_train_5_2_0.05/Noise_tensors_2"],
         "batch_size": 128,
         "shuffle": true,
