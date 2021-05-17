@@ -14,7 +14,9 @@ class BSD500(Dataset):
         super(Dataset, self).__init__()
         self.data_dir = data_dir
         self.noise = noise
-        h5f = h5py.File(self.data_dir, 'r')
+        data_file = os.listdir(self.data_dir)
+        data_path = os.path.join(self.data_dir, data_file[0])
+        h5f = h5py.File(data_path, 'r')
         self.keys = list(h5f.keys())
         random.shuffle(self.keys)
         h5f.close()

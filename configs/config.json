@@ -1,10 +1,9 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_halfaveraged_Chen_0.05_BsplineMaxProj_shared2",
+    "experim_name": "DnCNN4_halfaveraged_15",
     "seeds": [42],
-    "dataset": "fastMRI",
-    "preprocessing": false,
-    "sigma": 0.05,
+    "dataset": "BSD500",
+    "sigma": 15,
 
     "model":{
         "depth": 4,
@@ -16,9 +15,9 @@
         "spectral_norm": "Chen",
         "batchnorm": false,
         "beta": 0.6,
-        "activation_type": "deepBspline_lipschitz_maxprojection",
-        "shared_activation": true,
-        "shared_channels": true,
+        "activation_type": "relu",
+        "shared_activation": false,
+        "shared_channels": false,
         "QP": "cvxpy",
         "spline_init" : "relu",
         "spline_size": 51,
@@ -46,7 +45,7 @@
     "train_loader": {
         "target_dir": "data/singlecoil_train_5_2_0.05/Target_tensors",
         "noise_dirs": ["data/singlecoil_train_5_2_0.05/Noise_tensors_1", "data/singlecoil_train_5_2_0.05/Noise_tensors_2"],
-        "batch_size": 6,
+        "batch_size": 128,
         "shuffle": true,
         "num_workers": 0
     },
@@ -55,7 +54,7 @@
     "val_loader": {
         "target_dir": "data/singlecoil_validation_5_1_0.05/Target_tensors",
         "noise_dirs": ["data/singlecoil_validation_5_1_0.05/Noise_tensors_1"],
-        "batch_size": 6,
+        "batch_size": 128,
         "shuffle": false,
         "num_workers": 0
     },
@@ -69,15 +68,15 @@
     },
 
     "trainer": {
-        "epochs": 600,
+        "epochs": 50,
         "save_dir": "saved/",
-        "save_period": 25,
+        "save_period": 5,
         
         "tensorboardX": true,
         "log_dir": "saved/",
         "log_per_iter": 100,
 
         "val": true,
-        "val_per_epochs": 25
+        "val_per_epochs": 5
     }
 }
