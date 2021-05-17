@@ -16,7 +16,7 @@ sys.path.append('..')
 import models
 
 
-def pnp_fbs_csmri(model, im_orig, mask, device, **opts):
+def pnp_fbs_csmri(model, im_orig, mask, noises, device, **opts):
 
     alpha = opts.get('alpha', 0.4)
     maxitr = opts.get('maxitr', 100)
@@ -31,8 +31,11 @@ def pnp_fbs_csmri(model, im_orig, mask, device, **opts):
 
     m, n = im_orig.shape
     index = np.nonzero(mask)
-    noise = np.random.normal(loc=0, scale=sigma / 2.0, size=(m, n, 2)).view(np.complex128)
-    noise = np.squeeze(noise)
+    if noises is None:
+        noise = np.random.normal(loc=0, scale=sigma / 2.0, size=(m, n, 2)).view(np.complex128)
+        noise = np.squeeze(noise)
+    else:
+        noise = noises
 
     y = np.fft.fft2(im_orig) * mask + noise # observed value
     x_init = np.fft.ifft2(y) # zero fill
@@ -68,7 +71,10 @@ def pnp_fbs_csmri(model, im_orig, mask, device, **opts):
         # the reason for the following scaling:
         # our denoisers are trained with "normalized images + noise"
         # so the scale should be 1 + O(sigma)
-        scale_range = 1.0 + sigma / 2.0
+        if noises is None:
+            scale_range = 1.0 + sigma / 2.0
+        else:
+            scale_range = 1.0 + sigma / 255 / 2.0
         scale_shift = (1 - scale_range) / 2.0
         xtilde = xtilde * scale_range + scale_shift
 
@@ -101,10 +107,14 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description='PyTorch Training')
     parser.add_argument('--config', default='configs/config.json', type=str, help='Path to the config file')
     parser.add_argument('--model', default=None, type=str, help='Path to the trained .pth model')
+    parser.add_argument('--img', default='CS_MRI/file1002252_2_bottomright.pt', type=str, help='Path to the original image')
+    parser.add_argument('--mask', default='CS_MRI/Q_Random30.pt', type=str, help='Path to the k-space mask file')
+    parser.add_argument('--jpg', default=True, type=bool, help='file type either jpg or pt')
+    parser.add_argument('--noise', default='CS_MRI/noises.mat', type=str, help='Path to the k-space noise file')
     parser.add_argument('--device', default="cpu", type=str, help='device location')
     parser.add_argument('--experiment', default=None, type=str, help='name of the experiment')
-    parser.add_argument("--sigma", type=int, default=0.15, help="Noise level for the denoising model")
-    parser.add_argument("--alpha", type=float, default=0.4, help="Step size in Plug-and Play")
+    parser.add_argument("--sigma", type=float, default=0.05, help="Noise level for the denoising model")
+    parser.add_argument("--alpha", type=float, default=2.0, help="Step size in Plug-and Play")
     parser.add_argument("--maxitr", type=int, default=100, help="Number of iterations")
     parser.add_argument("--verbose", type=int, default=1, help="Whether printing the info out")
     args = parser.parse_args()
@@ -146,10 +156,12 @@ if __name__ == '__main__':
     config = json.load(open(args.config))
 
     # ---- load the model ----
-    model = models.DnCNN(depth=config["model"]["depth"], n_channels=config["model"]["n_channels"],
+    model = models.DnCNN(config, depth=config["model"]["depth"], n_channels=config["model"]["n_channels"],
                          image_channels=config["model"]["image_channels"], kernel_size=config["model"]["kernel_size"],
                          padding=config["model"]["padding"], architecture=config["model"]["architecture"],
-                         spectral_norm=config["model"]["spectral_norm"])
+                         spectral_norm=config["model"]["spectral_norm"],
+                         shared_activation=config["model"]["shared_activation"],
+                         shared_channels=config["model"]["shared_channels"], device=args.device)
     device = args.device
     checkpoint = torch.load(args.model, device)
     if device == 'cpu':
@@ -174,20 +186,35 @@ if __name__ == '__main__':
     with torch.no_grad():
 
         # ---- load the ground truth ----
-        im_orig = torch.load('CS_MRI/file1002252_2_bottomright.pt').numpy()
-        cv2.imwrite(f'{path}/GroundTruth.png', 255 * im_orig)
+        if args.jpg is True:
+            im_orig = cv2.imread(f'{args.img}', 0) / 255.0
+            cv2.imwrite(f'{path}/GroundTruth.png', 255 * im_orig)
+        else:
+            im_orig = torch.load(f'{args.img}').numpy()
+            cv2.imwrite(f'{path}/GroundTruth.png', 255 * im_orig)
 
         # ---- load mask matrix ----
-        mask = torch.load('CS_MRI/Q_Random30.pt').numpy()
+        if args.jpg is True:
+            mat = sio.loadmat(f'{args.mask}')
+            mask = mat.get('Q1').astype(np.float64)
+        else:
+            mask = torch.load(f'{args.mask}').numpy()
+
+        # ---- load noises -----
+        if args.jpg is True:
+            noises = sio.loadmat(f'{args.noise}')
+            noises = noises.get('noises').astype(np.complex128) * 3.0
+        else:
+            noises = None
 
         # ---- set options -----
         opts = dict(sigma=args.sigma, alpha=args.alpha, maxitr=args.maxitr, verbose=args.verbose)
 
         # ---- plug and play !!! -----
         if args.verbose:
-            x_out, inc, x_init, zero_fill_snr, snr = pnp_fbs_csmri(model, im_orig, mask, device, **opts)
+            x_out, inc, x_init, zero_fill_snr, snr = pnp_fbs_csmri(model, im_orig, mask, noises, device, **opts)
         else:
-            x_out, inc, x_init, zero_fill_snr = pnp_fbs_csmri(model, im_orig, mask, device, **opts)
+            x_out, inc, x_init, zero_fill_snr = pnp_fbs_csmri(model, im_orig, mask, noises, device, **opts)
 
         # ---- print result -----
         out_snr = psnr(x_out, im_orig)

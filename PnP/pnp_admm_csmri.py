@@ -78,7 +78,7 @@ def pnp_admm_csmri(model, im_orig, mask, noises, device, **opts):
         if noises is None:
             scale_range = 1.0 + sigma/2.0
         else:
-            scale_range = 1.0 + sigma/255/ 2.0
+            scale_range = 1.0 + sigma/255/2.0
         scale_shift = (1 - scale_range) / 2.0
         xtilde = xtilde * scale_range + scale_shift
 
