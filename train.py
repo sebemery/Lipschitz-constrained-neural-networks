@@ -4,16 +4,16 @@ import torch
 from torch.utils.data import DataLoader
 import dataloader
 import models
-from utils import Logger
+from utils import Logger, weights_init_kaiming
 from trainer import Trainer
 import os
 
 
 def main(config, resume, device):
-    if config["data"] == "fastMRI":
+    if config["dataset"] == "fastMRI":
         train_data = dataloader.KneeMRI(config["train_loader"]["target_dir"], config["train_loader"]["noise_dirs"])
         val_data = dataloader.KneeMRI(config["val_loader"]["target_dir"], config["val_loader"]["noise_dirs"])
-    elif config["data"] == "BSD500":
+    elif config["dataset"] == "BSD500":
         train_data = dataloader.BSD500(config["train_loader"]["target_dir"], config["sigma"])
         val_data = dataloader.BSD500(config["val_loader"]["target_dir"], config["sigma"])
     trainloader = DataLoader(train_data, batch_size=config["train_loader"]["batch_size"],
@@ -32,6 +32,8 @@ def main(config, resume, device):
                              spectral_norm=config["model"]["spectral_norm"],
                              shared_activation=config["model"]["shared_activation"],
                              shared_channels=config["model"]["shared_channels"], device=args.device)
+        if config["dataset"] == "BSD500":
+            model.apply(weights_init_kaiming)
         train_logger = Logger()
         trainer = Trainer(config, trainloader, valloader, model, train_logger, seed, resume, device)
         trainer.train()
