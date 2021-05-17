@@ -29,5 +29,5 @@ class BSD500(Dataset):
         noise = torch.FloatTensor(data.size()).normal_(mean=0, std=self.noise / 255.)
         noisy_data = data + noise
         h5f.close()
-        return data, noisy_data
+        return noisy_data, data
 

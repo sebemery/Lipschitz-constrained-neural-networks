@@ -1,6 +1,8 @@
 import torch
 import math
 import torch.nn as nn
+import numpy as np
+from skimage.measure import compare_psnr, compare_ssim
 
 
 def weights_init_kaiming(m):
@@ -13,3 +15,23 @@ def weights_init_kaiming(m):
         # nn.init.uniform(m.weight.data, 1.0, 0.02)
         m.weight.data.normal_(mean=0, std=math.sqrt(2./9./64.)).clamp_(-0.025,0.025)
         nn.init.constant(m.bias.data, 0.0)
+
+
+def batch_PSNR(img, imclean, data_range):
+    Img = img.data.cpu().numpy().astype(np.float32)
+    Iclean = imclean.data.cpu().numpy().astype(np.float32)
+    PSNR = 0
+    for i in range(Img.shape[0]):
+        PSNR += compare_psnr(Iclean[i,:,:,:], Img[i,:,:,:], data_range=data_range)
+    return PSNR/Img.shape[0]
+
+
+def batch_SSIM(img, imclean, data_range):
+    img = torch.transpose(img, 1, 3)
+    imclean = torch.transpose(imclean, 1, 3)
+    Img = img.data.cpu().numpy().astype(np.float32)
+    Iclean = imclean.data.cpu().numpy().astype(np.float32)
+    SSIM = 0
+    for i in range(Img.shape[0]):
+        SSIM += compare_ssim(Iclean[i,:,:,:], Img[i,:,:,:], data_range=data_range, multichannel=True)
+    return SSIM/Img.shape[0]

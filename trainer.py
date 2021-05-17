@@ -7,6 +7,7 @@ from utils import logger
 from utils.htmlwriter import HTML
 from torch.utils import tensorboard
 from utils.metrics import AverageMeter
+from utils.utilities import *
 import numpy as np
 import torch.nn.functional as F
 from tqdm import tqdm
@@ -107,6 +108,9 @@ class Trainer:
         # losses
         Total_loss_train = []
         MSE_loss_val = []
+        if self.config["dataset"] == "BSD500":
+            psnr_val = []
+            ssim_val = []
         self.model.init_hyperparams()
 
         # loop
@@ -123,6 +127,9 @@ class Trainer:
             if epoch % self.config['trainer']['val_per_epochs'] == 0:
                 results = self._valid_epoch(epoch)
                 MSE_loss_val.append(results['val_loss'])
+                if self.config["dataset"] == "BSD500":
+                    psnr_val.append(results['val_psnr'])
+                    ssim_val.append(results['val_ssim'])
                 self.logger.info('\n\n')
                 for k, v in results.items():
                     self.logger.info(f'{str(k):15s}: {v}')
@@ -142,6 +149,9 @@ class Trainer:
         self.writer.close()
         Total_loss_train = np.array(Total_loss_train)
         MSE_loss_val = np.array(MSE_loss_val)
+        if self.config["dataset"] == "BSD500":
+            psnr_val = np.array(psnr_val)
+            ssim_val = np.array(ssim_val)
         epochs = np.arange(self.config["trainer"]["val_per_epochs"], self.config["trainer"]["epochs"] + self.config["trainer"]["val_per_epochs"], self.config["trainer"]["val_per_epochs"])
         fig, ax1 = plt.subplots()
         ax2 = ax1.twinx()
@@ -153,6 +163,17 @@ class Trainer:
         ax1.set_title("Learning curves")
         fig.savefig(f'{self.checkpoint_dir}/curves.png')
         plt.show()
+        if self.config["dataset"] == "BSD500":
+            fig, ax1 = plt.subplots()
+            ax2 = ax1.twinx()
+            ax1.plot(epochs, psnr_val, 'g-', linewidth=1)
+            ax2.plot(epochs, ssim_val, 'b-', linewidth=1)
+            ax1.set_xlabel('epochs')
+            ax1.set_ylabel('val psnr', color='g')
+            ax2.set_ylabel('Val ssim', color='b')
+            ax1.set_title("Metric curves")
+            fig.savefig(f'{self.checkpoint_dir}/metrics.png')
+            plt.show()
 
     def _train_epoch(self, epoch):
         self.html_results.save()
@@ -164,9 +185,12 @@ class Trainer:
 
         self._reset_metrics()
         for batch_idx, data in enumerate(tbar):
-            cropp1, cropp2, cropp3, cropp4, cropp5, cropp6, cropp7, cropp8, target1, target2, target3, target4, _ = data
-            cropp = torch.cat([cropp1, cropp2, cropp3, cropp4, cropp5, cropp6, cropp7, cropp8], dim=0)
-            target = torch.cat([target1, target2, target3, target4, target1, target2, target3, target4], dim=0)
+            if self.config["dataset"] == "fastMRI":
+                cropp1, cropp2, cropp3, cropp4, cropp5, cropp6, cropp7, cropp8, target1, target2, target3, target4, _ = data
+                cropp = torch.cat([cropp1, cropp2, cropp3, cropp4, cropp5, cropp6, cropp7, cropp8], dim=0)
+                target = torch.cat([target1, target2, target3, target4, target1, target2, target3, target4], dim=0)
+            elif self.config["dataset"] == "BSD500":
+                cropp, target = data
             if self.device != 'cpu':
                 cropp, target = cropp.to(self.device, non_blocking=True), target.to(self.device, non_blocking=True)
 
@@ -207,7 +231,8 @@ class Trainer:
 
             tbar.set_description('T ({}) | TotalLoss {:.3f} |'.format(epoch, self.total_mse_loss.average))
 
-        self.scheduler.step(epoch)
+        if self.config["dataset"] == "BSD500":
+            self.scheduler.step(epoch)
 
         return log
 
@@ -237,13 +262,18 @@ class Trainer:
         self.model.eval()
         self.wrt_mode = 'val'
         total_loss_val = AverageMeter()
+        psnr_val = 0
+        ssim_val = 0
 
         tbar = tqdm(self.val_loader, ncols=130)
         with torch.no_grad():
             for batch_idx, data in enumerate(tbar):
-                cropp1, cropp2, cropp3, cropp4, target1, target2, target3, target4, _ = data
-                cropp = torch.cat([cropp1, cropp2, cropp3, cropp4], dim=0)
-                target = torch.cat([target1, target2, target3, target4], dim=0)
+                if self.config["dataset"] == "fastMRI":
+                    cropp1, cropp2, cropp3, cropp4, target1, target2, target3, target4, _ = data
+                    cropp = torch.cat([cropp1, cropp2, cropp3, cropp4], dim=0)
+                    target = torch.cat([target1, target2, target3, target4], dim=0)
+                elif self.config["dataset"] == "BSD500":
+                    cropp, target = data
                 if self.device != 'cpu':
                     cropp, target = cropp.to(self.device, non_blocking=True), target.to(self.device, non_blocking=True)
 
@@ -253,6 +283,9 @@ class Trainer:
                 # LOSS
                 loss = self.criterion(output, target)/batch_size
                 total_loss_val.update(loss.cpu())
+                out_val = torch.clamp(cropp - output, 0., 1.)
+                psnr_val += batch_PSNR(out_val, target, 1.)
+                ssim_val += batch_SSIM(out_val, target, 1.)
 
                 # PRINT INFO
                 tbar.set_description('EVAL ({}) | MSELoss: {:.3f} |'.format(epoch, total_loss_val.average))
@@ -260,10 +293,16 @@ class Trainer:
             # METRICS TO TENSORBOARD
             self.wrt_step = epoch * len(self.val_loader)
             self.writer.add_scalar(f'{self.wrt_mode}/loss', total_loss_val.average, self.wrt_step)
+            psnr_val /= len(self.val_loader)
+            ssim_val /= len(self.val_loader)
+            self.writer.add_scalar(f'{self.wrt_mode}/Test PSNR', psnr_val, self.wrt_step)
+            self.writer.add_scalar(f'{self.wrt_mode}/Test SSIM', ssim_val, self.wrt_step)
 
             log = {'val_loss': total_loss_val.average}
             self.html_results.add_results(epoch=epoch, results=log)
             self.html_results.save()
+            log["val_psnr"] = psnr_val
+            log["val_ssim"] = ssim_val
         return log
 
     def _reset_metrics(self):
