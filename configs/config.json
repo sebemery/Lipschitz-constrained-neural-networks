@@ -54,7 +54,7 @@
     "val_loader": {
         "target_dir": "data/val_BSD500_preprocessed",
         "noise_dirs": ["data/singlecoil_validation_5_1_0.05/Noise_tensors_1"],
-        "batch_size": 128,
+        "batch_size": 1,
         "shuffle": false,
         "num_workers": 0
     },
