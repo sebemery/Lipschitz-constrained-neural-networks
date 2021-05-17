@@ -114,7 +114,7 @@ def parse_arguments():
     parser.add_argument('--device', default="cpu", type=str, help='device location')
     parser.add_argument('--experiment', default=None, type=str, help='name of the experiment')
     parser.add_argument("--sigma", type=float, default=0.05, help="Noise level for the denoising model")
-    parser.add_argument("--alpha", type=float, default=2.0, help="Step size in Plug-and Play")
+    parser.add_argument("--alpha", type=float, default=0.4, help="Step size in Plug-and Play")
     parser.add_argument("--maxitr", type=int, default=100, help="Number of iterations")
     parser.add_argument("--verbose", type=int, default=1, help="Whether printing the info out")
     args = parser.parse_args()

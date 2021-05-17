@@ -145,6 +145,8 @@ class DnCNN(BaseModel):
                     self.layers.append(self.init_activation(('conv', n_channels)))
             for _ in range(depth - 2):
                 self.layers.append(nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding))
+                if self.batchnorm is True:
+                    self.layers.append(nn.BatchNorm2d(n_channels))
                 if self.activation == "relu":
                     self.layers.append(nn.ReLU(inplace=True))
                 elif self.activation == "leaky_relu":
