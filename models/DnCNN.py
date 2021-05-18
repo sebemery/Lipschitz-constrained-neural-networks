@@ -66,7 +66,7 @@ class DnCNN(BaseModel):
             for _ in range(depth - 2):
                 self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding)))
                 if self.batchnorm is True:
-                    self.layers.append(utils.bn_spectral_norm(nn.BatchNorm2d(n_channels)))
+                    self.layers.append(nn.BatchNorm2d(n_channels))
                 if self.activation == "relu":
                     self.layers.append(nn.ReLU(inplace=True))
                 elif self.activation == "leaky_relu":
