@@ -234,7 +234,7 @@ class BaseModel(nn.Module):
         i = 0
         for module in self.dncnn.modules():
             if not isinstance(module, nn.Sequential):
-                if hasattr(module, 'weight_orig'):
+                if hasattr(module, 'weight_orig') or hasattr(module, 'weight'):
                     if isinstance(module.weight_orig, nn.Parameter):
                         if isinstance(module, nn.Conv2d) or isinstance(module, nn.Linear):
                             wd = wd + self.wd_hyperparam[i] * module.weight.pow(2).sum()
