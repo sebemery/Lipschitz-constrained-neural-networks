@@ -1,9 +1,9 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN4_halfaveraged_15_nosn",
+    "experim_name": "DnCNN4_residual_5",
     "seeds": [42],
     "dataset": "BSD500",
-    "sigma": 15,
+    "sigma": 5,
 
     "model":{
         "depth": 4,
@@ -11,8 +11,8 @@
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
-        "architecture": "halfaveraged",
-        "spectral_norm": "None",
+        "architecture": "residual",
+        "spectral_norm": "Chen",
         "batchnorm": false,
         "beta": 0.6,
         "activation_type": "relu",
