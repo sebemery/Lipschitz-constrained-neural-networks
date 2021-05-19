@@ -11,7 +11,7 @@
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
-        "architecture": "residual",
+        "architecture": "halfaveraged",
         "spectral_norm": "None",
         "batchnorm": false,
         "beta": 0.6,
