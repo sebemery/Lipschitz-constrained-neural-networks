@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN4_residual_15_testepoch",
+    "experim_name": "DnCNN4_residual_15_testepoch_BsplineMaxProj",
     "seeds": [42],
     "dataset": "BSD500",
     "sigma": 15,
@@ -15,7 +15,7 @@
         "spectral_norm": "Chen",
         "batchnorm": false,
         "beta": 0.6,
-        "activation_type": "relu",
+        "activation_type": "deepBspline_lipschitz_maxprojection",
         "shared_activation": false,
         "shared_channels": false,
         "QP": "cvxpy",
