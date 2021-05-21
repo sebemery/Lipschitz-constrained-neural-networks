@@ -1,9 +1,9 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN17_residual_15_BsplineMaxProj",
+    "experim_name": "DnCNN17_residual_5_BsplineMaxProj",
     "seeds": [42],
     "dataset": "BSD500",
-    "sigma": 15,
+    "sigma": 5,
 
     "model":{
         "depth": 17,
