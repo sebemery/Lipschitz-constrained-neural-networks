@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN4_residual_15_BsplineMaxProj",
+    "experim_name": "DnCNN4_residual_15_testepoch",
     "seeds": [42],
     "dataset": "BSD500",
     "sigma": 15,
@@ -15,7 +15,7 @@
         "spectral_norm": "Chen",
         "batchnorm": false,
         "beta": 0.6,
-        "activation_type": "deepBspline_lipschitz_maxprojection",
+        "activation_type": "relu",
         "shared_activation": false,
         "shared_channels": false,
         "QP": "cvxpy",
@@ -68,7 +68,7 @@
     },
 
     "trainer": {
-        "epochs": 50,
+        "epochs": 70,
         "save_dir": "saved/",
         "save_period": 5,
         
