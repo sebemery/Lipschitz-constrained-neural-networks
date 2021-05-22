@@ -1,9 +1,9 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN4_halfaveraged_5_BsplineMaxProj",
+    "experim_name": "DnCNN4_halfaveraged_15_BsplineMaxProj",
     "seeds": [42],
     "dataset": "BSD500",
-    "sigma": 5,
+    "sigma": 15,
 
     "model":{
         "depth": 4,
