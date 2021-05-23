@@ -133,9 +133,10 @@ class Trainer:
                 self.logger.info('\n\n')
                 for k, v in results.items():
                     self.logger.info(f'{str(k):15s}: {v}')
-                    if epoch == self.epochs:
-                        with open(f'{self.checkpoint_dir}/val.txt', 'w') as f:
-                            f.write("%s\n" % (k + ':' + f'{v}'))
+            if epoch == self.epochs:
+                for k, v in results.items():
+                    with open(f'{self.checkpoint_dir}/val.txt', 'w') as f:
+                        f.write("%s\n" % (k + ':' + f'{v}'))
 
             if self.train_logger is not None:
                 log = {'epoch': epoch, **results}
