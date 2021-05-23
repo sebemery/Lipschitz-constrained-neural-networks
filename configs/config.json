@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN17_halfaveraged_5_BsplineMaxProj_7",
+    "experim_name": "DnCNN17_residual_5_BsplineMaxProj_7",
     "seeds": [7],
     "dataset": "BSD500",
     "sigma": 5,
@@ -11,7 +11,7 @@
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
-        "architecture": "halfaveraged",
+        "architecture": "residual",
         "spectral_norm": "Chen",
         "batchnorm": true,
         "beta": 0.6,
