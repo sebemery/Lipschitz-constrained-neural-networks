@@ -1,9 +1,9 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN17_residual_5_BsplineMaxProj_7",
+    "experim_name": "DnCNN17_residual_5_BsplineMaxProj_100",
     "seeds": [7],
     "dataset": "BSD500",
-    "sigma": 5,
+    "sigma": 42,
 
     "model":{
         "depth": 17,
@@ -68,7 +68,7 @@
     },
 
     "trainer": {
-        "epochs": 50,
+        "epochs": 100,
         "save_dir": "saved/",
         "save_period": 5,
         
