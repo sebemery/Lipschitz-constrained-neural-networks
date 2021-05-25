@@ -246,7 +246,7 @@ class Trainer:
             tbar.set_description('T ({}) | TotalLoss {:.3f} |'.format(epoch, self.total_mse_loss.average))
 
         if self.config["dataset"] == "BSD500":
-            self.scheduler.step(epoch)
+            self.scheduler.step()
         print(self.scheduler.get_last_lr())
         return log
 
