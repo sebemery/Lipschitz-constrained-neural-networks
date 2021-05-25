@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN4_residual_15_fix",
+    "experim_name": "SimpleCNN_residual_15",
     "seeds": [42],
     "dataset": "BSD500",
     "sigma": 15,
