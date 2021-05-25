@@ -10,6 +10,7 @@ class DnCNN(BaseModel):
         super().__init__(config, device)
         self.layers = []
         self.architecture = architecture
+        self.dataset = config["dataset"]
         self.activation = config["model"]["activation_type"]
         self.batchnorm = config["model"]["batchnorm"]
 
@@ -42,10 +43,13 @@ class DnCNN(BaseModel):
     def layers_list(self, spectral_norm, shared_activation=False, shared_channels=False, depth=7, n_channels=64, image_channels=1, kernel_size=3, padding=1):
         """
         Initialize the list of layer to pass for the sequential module
+        -> change everything condition to perseval and normal
         """
         if spectral_norm == "Chen":
-
-            self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding, bias=False)))
+            if self.dataset == "BSD500":
+                self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding, bias=False)))
+            elif self.dataset == "fastMRI":
+                self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding)))
             if self.activation == "relu":
                 self.layers.append(nn.ReLU(inplace=True))
             elif self.activation == "leaky_relu":
@@ -64,7 +68,10 @@ class DnCNN(BaseModel):
                 elif (shared_activation is False) and (shared_channels is False):
                     self.layers.append(self.init_activation(('conv', n_channels)))
             for _ in range(depth - 2):
-                self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding, bias=False)))
+                if self.dataset == "BSD500":
+                    self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding, bias=False)))
+                elif self.dataset == "fastMRI":
+                    self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding)))
                 if self.batchnorm is True:
                     self.layers.append(nn.BatchNorm2d(n_channels))
                 if self.activation == "relu":
@@ -82,7 +89,10 @@ class DnCNN(BaseModel):
                         self.layers.append(self.init_activation(('conv', 1)))
                     elif (shared_activation is False) and (shared_channels is False):
                         self.layers.append(self.init_activation(('conv', n_channels)))
-            self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=n_channels, out_channels=image_channels, kernel_size=kernel_size, padding=padding, bias=False)))
+            if self.dataset == "BSD500":
+                self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=n_channels, out_channels=image_channels, kernel_size=kernel_size, padding=padding, bias=False)))
+            elif self.dataset == "fastMRI":
+                self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=n_channels, out_channels=image_channels, kernel_size=kernel_size, padding=padding)))
 
         elif spectral_norm == "Normal":
 
@@ -125,7 +135,10 @@ class DnCNN(BaseModel):
 
         elif spectral_norm == "None":
 
-            self.layers.append(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding, bias=False))
+            if self.dataset == "BSD500":
+                self.layers.append(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding, bias=False))
+            elif self.dataset == "fastMRI":
+                self.layers.append(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding))
             if self.activation == "relu":
                 self.layers.append(nn.ReLU(inplace=True))
             elif self.activation == "leaky_relu":
@@ -144,7 +157,10 @@ class DnCNN(BaseModel):
                 elif (shared_activation is False) and (shared_channels is False):
                     self.layers.append(self.init_activation(('conv', n_channels)))
             for _ in range(depth - 2):
-                self.layers.append(nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding, bias=False))
+                if self.dataset == "BSD500":
+                    self.layers.append(nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding, bias=False))
+                elif self.dataset == "fastMRI":
+                    self.layers.append(nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding))
                 if self.batchnorm is True:
                     self.layers.append(nn.BatchNorm2d(n_channels))
                 if self.activation == "relu":
@@ -162,7 +178,10 @@ class DnCNN(BaseModel):
                         self.layers.append(self.init_activation(('conv', 1)))
                     elif (shared_activation is False) and (shared_channels is False):
                         self.layers.append(self.init_activation(('conv', n_channels)))
-            self.layers.append(nn.Conv2d(in_channels=n_channels, out_channels=image_channels, kernel_size=kernel_size, padding=padding, bias=False))
+            if self.dataset == "BSD500":
+                self.layers.append(nn.Conv2d(in_channels=n_channels, out_channels=image_channels, kernel_size=kernel_size, padding=padding, bias=False))
+            elif self.dataset == "fastMRI":
+                self.layers.append(nn.Conv2d(in_channels=n_channels, out_channels=image_channels, kernel_size=kernel_size, padding=padding))
 
         elif spectral_norm == "Perseval":
 

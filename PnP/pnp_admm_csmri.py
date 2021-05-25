@@ -221,9 +221,9 @@ if __name__ == '__main__':
 
         # ---- plug and play !!! -----
         if args.verbose:
-            x_out, inc, x_init, zero_fill_snr, snr = pnp_admm_csmri(model, im_orig, mask, noises, mu, device, **opts)
+            x_out, inc, x_init, zero_fill_snr, snr = pnp_admm_csmri(model, im_orig, mask, noises, args.mu, device, **opts)
         else:
-            x_out, inc, x_init, zero_fill_snr = pnp_admm_csmri(model, im_orig, mask, noises, mu, device, **opts)
+            x_out, inc, x_init, zero_fill_snr = pnp_admm_csmri(model, im_orig, mask, noises, args.mu, device, **opts)
 
         # ---- print result -----
         out_snr = psnr(x_out, im_orig)
