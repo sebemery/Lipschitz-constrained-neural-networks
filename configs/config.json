@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "lr_dummy",
+    "experim_name": "DnCNN4_residual_15_fix",
     "seeds": [42],
     "dataset": "BSD500",
     "sigma": 15,
@@ -12,7 +12,7 @@
         "kernel_size": 3,
         "padding": 1,
         "architecture": "residual",
-        "spectral_norm": "None",
+        "spectral_norm": "Chen",
         "batchnorm": false,
         "beta": 0.6,
         "activation_type": "relu",
@@ -68,7 +68,7 @@
     },
 
     "trainer": {
-        "epochs": 10,
+        "epochs": 70,
         "save_dir": "saved/",
         "save_period": 5,
         
