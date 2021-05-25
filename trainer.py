@@ -26,7 +26,7 @@ class Trainer:
             self.model = self.model.to(device)
         print(self.model.get_num_params())
         self.set_optimization()
-        self.scheduler = torch.optim.lr_scheduler.StepLR(self.main_optimizer, step_size=25, gamma=0.1)
+        self.scheduler = torch.optim.lr_scheduler.StepLR(self.main_optimizer, step_size=2, gamma=0.1)
         self.criterion = torch.nn.MSELoss(reduction="sum")
         self.train_logger = train_logger
         self.logger = logging.getLogger(self.__class__.__name__)
