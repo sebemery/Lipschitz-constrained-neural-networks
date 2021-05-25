@@ -45,7 +45,7 @@ class DnCNN(BaseModel):
         """
         if spectral_norm == "Chen":
 
-            self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding)))
+            self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding, bias=False)))
             if self.activation == "relu":
                 self.layers.append(nn.ReLU(inplace=True))
             elif self.activation == "leaky_relu":
@@ -64,7 +64,7 @@ class DnCNN(BaseModel):
                 elif (shared_activation is False) and (shared_channels is False):
                     self.layers.append(self.init_activation(('conv', n_channels)))
             for _ in range(depth - 2):
-                self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding)))
+                self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding, bias=False)))
                 if self.batchnorm is True:
                     self.layers.append(nn.BatchNorm2d(n_channels))
                 if self.activation == "relu":
@@ -82,7 +82,7 @@ class DnCNN(BaseModel):
                         self.layers.append(self.init_activation(('conv', 1)))
                     elif (shared_activation is False) and (shared_channels is False):
                         self.layers.append(self.init_activation(('conv', n_channels)))
-            self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=n_channels, out_channels=image_channels, kernel_size=kernel_size, padding=padding)))
+            self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=n_channels, out_channels=image_channels, kernel_size=kernel_size, padding=padding, bias=False)))
 
         elif spectral_norm == "Normal":
 
@@ -125,7 +125,7 @@ class DnCNN(BaseModel):
 
         elif spectral_norm == "None":
 
-            self.layers.append(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding))
+            self.layers.append(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding, bias=False))
             if self.activation == "relu":
                 self.layers.append(nn.ReLU(inplace=True))
             elif self.activation == "leaky_relu":
@@ -144,7 +144,7 @@ class DnCNN(BaseModel):
                 elif (shared_activation is False) and (shared_channels is False):
                     self.layers.append(self.init_activation(('conv', n_channels)))
             for _ in range(depth - 2):
-                self.layers.append(nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding))
+                self.layers.append(nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding, bias=False))
                 if self.batchnorm is True:
                     self.layers.append(nn.BatchNorm2d(n_channels))
                 if self.activation == "relu":
@@ -162,7 +162,7 @@ class DnCNN(BaseModel):
                         self.layers.append(self.init_activation(('conv', 1)))
                     elif (shared_activation is False) and (shared_channels is False):
                         self.layers.append(self.init_activation(('conv', n_channels)))
-            self.layers.append(nn.Conv2d(in_channels=n_channels, out_channels=image_channels, kernel_size=kernel_size, padding=padding))
+            self.layers.append(nn.Conv2d(in_channels=n_channels, out_channels=image_channels, kernel_size=kernel_size, padding=padding, bias=False))
 
         elif spectral_norm == "Perseval":
 

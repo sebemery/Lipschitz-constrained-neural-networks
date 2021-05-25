@@ -27,7 +27,10 @@ class Trainer:
         print(self.model.get_num_params())
         self.set_optimization()
         self.scheduler = torch.optim.lr_scheduler.StepLR(self.main_optimizer, step_size=2, gamma=0.1)
-        self.criterion = torch.nn.MSELoss(reduction="sum")
+        if self.config["dataset"] == "fastMRI":
+            self.criterion = torch.nn.MSELoss(reduction="sum")
+        elif self.config["dataset"] == "BSD500":
+            self.criterion = torch.nn.MSELoss(size_average=False)
         self.train_logger = train_logger
         self.logger = logging.getLogger(self.__class__.__name__)
         self.start_epoch = 1
@@ -152,7 +155,6 @@ class Trainer:
         self.html_results.save()
         self.writer.flush()
         self.writer.close()
-        print(self.scheduler.get_last_lr())
         Total_loss_train = np.array(Total_loss_train)
         MSE_loss_val = np.array(MSE_loss_val)
         if self.config["dataset"] == "BSD500":
@@ -213,7 +215,10 @@ class Trainer:
             output = self.model(cropp)
 
             # data fidelity
-            data_fidelity = self.criterion(output, target)/batch_size
+            if self.config["dataset"] == "fastMRI":
+                data_fidelity = self.criterion(output, target) / batch_size
+            elif self.config["dataset"] == "BSD500":
+                data_fidelity = self.criterion(output, target)/(output.size()[0]*2)
             # data_fidelity.backward(retain_graph=True)
 
             # regularization
@@ -246,7 +251,7 @@ class Trainer:
             tbar.set_description('T ({}) | TotalLoss {:.3f} |'.format(epoch, self.total_mse_loss.average))
 
         if self.config["dataset"] == "BSD500":
-            self.scheduler.step()
+            self.scheduler.step(epoch=epoch-1)
         print(self.scheduler.get_last_lr())
         return log
 
@@ -295,9 +300,12 @@ class Trainer:
                 output = self.model(cropp)
 
                 # LOSS
-                loss = self.criterion(output, target)/batch_size
+                if self.config["dataset"] == "fastMRI":
+                    loss = self.criterion(output, target) / batch_size
+                elif self.config["dataset"] == "BSD500":
+                    loss = self.criterion(output, target) / (output.size()[0] * 2)
                 total_loss_val.update(loss.cpu())
-                out_val = torch.clamp(cropp - output, 0., 1.)
+                out_val = torch.clamp(output, 0., 1.)
                 psnr_val += batch_PSNR(out_val, target, 1.)
                 ssim_val += batch_SSIM(out_val, target, 1.)
 
