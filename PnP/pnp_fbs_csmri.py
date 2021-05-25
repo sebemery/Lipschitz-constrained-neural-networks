@@ -16,7 +16,7 @@ sys.path.append('..')
 import models
 
 
-def pnp_fbs_csmri(model, im_orig, mask, noises, mu, device, **opts):
+def pnp_fbs_csmri_(model, im_orig, mask, noises, mu, device, **opts):
 
     alpha = opts.get('alpha', 0.4)
     maxitr = opts.get('maxitr', 100)
@@ -214,9 +214,9 @@ if __name__ == '__main__':
 
         # ---- plug and play !!! -----
         if args.verbose:
-            x_out, inc, x_init, zero_fill_snr, snr = pnp_fbs_csmri(model, im_orig, mask, noises, args.mu, device, **opts)
+            x_out, inc, x_init, zero_fill_snr, snr = pnp_fbs_csmri_(model, im_orig, mask, noises, args.mu, device, **opts)
         else:
-            x_out, inc, x_init, zero_fill_snr = pnp_fbs_csmri(model, im_orig, mask, noises, args.mu, device, **opts)
+            x_out, inc, x_init, zero_fill_snr = pnp_fbs_csmri_(model, im_orig, mask, noises, args.mu, device, **opts)
 
         # ---- print result -----
         out_snr = psnr(x_out, im_orig)

@@ -6,8 +6,7 @@ import torch
 import cv2
 import scipy.io as sio
 import matplotlib.pyplot as plt
-from PnP.pnp_admm_csmri import pnp_admm_csmri
-from PnP.pnp_fbs_csmri import pnp_fbs_csmri
+import PnP
 import sys
 sys.path.append('..')
 import models
@@ -59,6 +58,7 @@ def psnr(x, im_orig):
     norm2 = np.sum((np.absolute(x - im_orig)) ** 2)
     psnr = 10 * np.log10(norm1 / norm2)
     return psnr
+
 
 if __name__ == '__main__':
 
@@ -128,14 +128,14 @@ if __name__ == '__main__':
             # ---- plug and play !!! -----
             if args.algo == "admm":
                 if args.verbose:
-                    x_out, inc, x_init, zero_fill_snr, snr = pnp_admm_csmri(model, im_orig, mask, noises, device, **opts)
+                    x_out, inc, x_init, zero_fill_snr, snr = PnP.pnp_admm_csmri.pnp_admm_csmri_(model, im_orig, mask, noises, device, **opts)
                 else:
-                    x_out, inc, x_init, zero_fill_snr = pnp_admm_csmri(model, im_orig, mask, noises, device, **opts)
+                    x_out, inc, x_init, zero_fill_snr = PnP.pnp_admm_csmri.pnp_admm_csmri_(model, im_orig, mask, noises, device, **opts)
             elif args.algo == "fbs":
                 if args.verbose:
-                    x_out, inc, x_init, zero_fill_snr, snr = pnp_fbs_csmri(model, im_orig, mask, noises, device, **opts)
+                    x_out, inc, x_init, zero_fill_snr, snr = PnP.pnp_fbs_csmri.pnp_fbs_csmri_(model, im_orig, mask, noises, device, **opts)
                 else:
-                    x_out, inc, x_init, zero_fill_snr = pnp_fbs_csmri(model, im_orig, mask, noises, device, **opts)
+                    x_out, inc, x_init, zero_fill_snr = PnP.pnp_fbs_csmri.pnp_fbs_csmri_(model, im_orig, mask, noises, device, **opts)
 
             # directory
             path = os.path.join(path, f"{mu}")
