@@ -108,6 +108,7 @@ class Trainer:
         # losses
         Total_loss_train = []
         MSE_loss_val = []
+        lr = []
         if self.config["dataset"] == "BSD500":
             psnr_val = []
             ssim_val = []
@@ -141,6 +142,9 @@ class Trainer:
             if self.train_logger is not None:
                 log = {'epoch': epoch, **results}
                 self.train_logger.add_entry(log)
+
+            for i, opt_group in enumerate(self.main_optimizer.param_groups):
+                lr.append(opt_group['lr'])
 
             # SAVE CHECKPOINT
             if epoch % self.save_period == 0:
@@ -176,6 +180,14 @@ class Trainer:
             ax1.set_title("Metric curves")
             fig.savefig(f'{self.checkpoint_dir}/metrics.png')
             plt.show()
+
+        fig, ax1 = plt.subplots()
+        ax1.plot(lr, 'k-', linewidth=1)
+        ax1.set_xlabel('epochs')
+        ax1.set_ylabel('lr', color='b')
+        ax1.set_title("Lr curves")
+        fig.savefig(f'{self.checkpoint_dir}/lr.png')
+        plt.show()
 
     def _train_epoch(self, epoch):
         self.html_results.save()
