@@ -16,13 +16,14 @@ sys.path.append('..')
 import models
 
 
-def pnp_admm_csmri(model, im_orig, mask, noises, device, **opts):
+def pnp_admm_csmri(model, im_orig, mask, noises,mu, device, **opts):
 
     alpha = opts.get('alpha', 2.0)
     maxitr = opts.get('maxitr', 100)
     verbose = opts.get('verbose', 1)
     sigma = opts.get('sigma', 5)
     device = device
+    mu = mu
     inc = []
     if verbose:
         snr = []
@@ -84,8 +85,8 @@ def pnp_admm_csmri(model, im_orig, mask, noises, device, **opts):
 
         # pytorch denoising model
         xtilde_torch = np.reshape(xtilde, (1,1,m,n))
-        xtilde_torch = torch.from_numpy(xtilde_torch).type(torch.FloatTensor).to(device, non_blocking=True)
-        x = model(xtilde_torch).cpu().numpy()
+        xtilde_torch = torch.from_numpy(mu*xtilde_torch).type(torch.FloatTensor).to(device, non_blocking=True)
+        x = (1/mu)*(model(xtilde_torch).cpu().numpy())
         x = np.reshape(x, (m, n))
 
         # scale and shift the denoised image back
@@ -120,6 +121,7 @@ def parse_arguments():
     parser.add_argument('--noise', default='CS_MRI/noises.mat', type=str, help='Path to the k-space noise file')
     parser.add_argument('--device', default="cpu", type=str, help='device location')
     parser.add_argument('--experiment', default=None, type=str, help='name of the experiment')
+    parser.add_argument("--mu", type=float, default=1.0, help="Noise level scaling factor")
     parser.add_argument("--sigma", type=float, default=0.05, help="Noise level for the denoising model")
     parser.add_argument("--alpha", type=float, default=2.0, help="Step size in Plug-and Play")
     parser.add_argument("--maxitr", type=int, default=100, help="Number of iterations")
@@ -219,9 +221,9 @@ if __name__ == '__main__':
 
         # ---- plug and play !!! -----
         if args.verbose:
-            x_out, inc, x_init, zero_fill_snr, snr = pnp_admm_csmri(model, im_orig, mask, noises, device, **opts)
+            x_out, inc, x_init, zero_fill_snr, snr = pnp_admm_csmri(model, im_orig, mask, noises, mu, device, **opts)
         else:
-            x_out, inc, x_init, zero_fill_snr = pnp_admm_csmri(model, im_orig, mask, noises, device, **opts)
+            x_out, inc, x_init, zero_fill_snr = pnp_admm_csmri(model, im_orig, mask, noises, mu, device, **opts)
 
         # ---- print result -----
         out_snr = psnr(x_out, im_orig)
