@@ -64,7 +64,7 @@ class DnCNN(BaseModel):
                 elif (shared_activation is False) and (shared_channels is False):
                     self.layers.append(self.init_activation(('conv', n_channels)))
             for _ in range(depth - 2):
-                self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding, bias=False)))
+                self.layers.append(utils.Spectral_Normalize_chen.spectral_norm(nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding, bias=False)))
                 if self.batchnorm is True:
                     self.layers.append(nn.BatchNorm2d(n_channels))
                 if self.activation == "relu":
