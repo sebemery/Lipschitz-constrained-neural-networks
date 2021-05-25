@@ -6,9 +6,9 @@ import torch
 import cv2
 import scipy.io as sio
 import matplotlib.pyplot as plt
-import PnP
 import sys
 sys.path.append('..')
+import PnP
 import models
 
 
@@ -25,7 +25,7 @@ def parse_arguments():
     parser.add_argument('--algo', default="admm", type=str, help='admm/fbs')
     parser.add_argument('--mu_upper', default=2.0, type=float, help='highest value of mu')
     parser.add_argument('--mu_lower', default=0.1, type=float, help='lowest value of mu')
-    parser.add_argument('--mu_step', default=0.1, type=float, help='step')
+    parser.add_argument('--mu_step', default=5, type=int, help='step')
     parser.add_argument("--sigma", type=float, default=0.05, help="Noise level for the denoising model")
     parser.add_argument("--alpha", type=float, default=2.0, help="Step size in Plug-and Play")
     parser.add_argument("--maxitr", type=int, default=100, help="Number of iterations")
@@ -122,31 +122,32 @@ if __name__ == '__main__':
 
         # ---- set options -----
         opts = dict(sigma=args.sigma, alpha=args.alpha, maxitr=args.maxitr, verbose=args.verbose)
-
+        mu_snr = []
         mu_vec = np.linspace(args.mu_lower, args.mu_upper, args.mu_step)
         for mu in mu_vec:
             # ---- plug and play !!! -----
             if args.algo == "admm":
                 if args.verbose:
-                    x_out, inc, x_init, zero_fill_snr, snr = PnP.pnp_admm_csmri.pnp_admm_csmri_(model, im_orig, mask, noises, device, **opts)
+                    x_out, inc, x_init, zero_fill_snr, snr = PnP.pnp_admm_csmri.pnp_admm_csmri_(model, im_orig, mask, noises, mu, device, **opts)
                 else:
-                    x_out, inc, x_init, zero_fill_snr = PnP.pnp_admm_csmri.pnp_admm_csmri_(model, im_orig, mask, noises, device, **opts)
+                    x_out, inc, x_init, zero_fill_snr = PnP.pnp_admm_csmri.pnp_admm_csmri_(model, im_orig, mask, noises, mu, device, **opts)
             elif args.algo == "fbs":
                 if args.verbose:
-                    x_out, inc, x_init, zero_fill_snr, snr = PnP.pnp_fbs_csmri.pnp_fbs_csmri_(model, im_orig, mask, noises, device, **opts)
+                    x_out, inc, x_init, zero_fill_snr, snr = PnP.pnp_fbs_csmri.pnp_fbs_csmri_(model, im_orig, mask, noises, mu, device, **opts)
                 else:
-                    x_out, inc, x_init, zero_fill_snr = PnP.pnp_fbs_csmri.pnp_fbs_csmri_(model, im_orig, mask, noises, device, **opts)
+                    x_out, inc, x_init, zero_fill_snr = PnP.pnp_fbs_csmri.pnp_fbs_csmri_(model, im_orig, mask, noises, mu, device, **opts)
 
             # directory
-            path = os.path.join(path, f"{mu}")
-            if not os.path.exists(path):
-                os.makedirs(path)
+            path_mu = os.path.join(path, f"{mu}")
+            if not os.path.exists(path_mu):
+                os.makedirs(path_mu)
             # ---- print result -----
             out_snr = psnr(x_out, im_orig)
+            mu_snr.append(out_snr)
             print('Plug-and-Play PNSR: ', out_snr)
             metrics = {"PSNR": np.round(snr, 8), "Zero fill PSNR": np.round(zero_fill_snr, 8), }
 
-            with open(f'{path}/snr.txt', 'w') as f:
+            with open(f'{path_mu}/snr.txt', 'w') as f:
                 for k, v in list(metrics.items()):
                     f.write("%s\n" % (k + ':' + f'{v}'))
 
@@ -156,7 +157,7 @@ if __name__ == '__main__':
             ax1.set_xlabel('iteration')
             ax1.set_ylabel('Increment', color='b')
             ax1.set_title("Increment curve")
-            fig.savefig(f'{path}/inc.png')
+            fig.savefig(f'{path_mu}/inc.png')
             plt.show()
 
             if args.verbose:
@@ -165,12 +166,27 @@ if __name__ == '__main__':
                 ax1.set_xlabel('iteration')
                 ax1.set_ylabel('PSNR', color='b')
                 ax1.set_title("PSNR curve")
-                fig.savefig(f'{path}/snr.png')
+                fig.savefig(f'{path_mu}/snr.png')
                 plt.show()
 
-            torch.save(torch.from_numpy(x_out), f'{path}/{args.algo}.pt')
-            torch.save(torch.from_numpy(x_init), f'{path}/ifft.pt')
+            torch.save(torch.from_numpy(x_out), f'{path_mu}/{args.algo}.pt')
+            torch.save(torch.from_numpy(x_init), f'{path_mu}/ifft.pt')
             x_out = scale(x_out)
             x_init = scale(x_init)
-            cv2.imwrite(f'{path}/{args.algo}.png', x_out)
-            cv2.imwrite(f'{path}/ifft.png', x_init)
+            cv2.imwrite(f'{path_mu}/{args.algo}.png', x_out)
+            cv2.imwrite(f'{path_mu}/ifft.png', x_init)
+
+        fig, ax1 = plt.subplots()
+        ax1.plot(mu_vec, np.asarray(mu_snr), 'b-', linewidth=1)
+        ax1.set_xlabel('mu')
+        ax1.set_ylabel('SNR', color='b')
+        ax1.set_title("SNR for different scaling mu")
+        fig.savefig(f'{path}/mu.png')
+        plt.show()
+        idx_max = np.argmax(np.asarray(mu_snr))
+        mu_max = mu_vec[idx_max]
+        param = {"mu": mu_max}
+
+        with open(f'{path}/mu.txt', 'w') as f:
+            for k, v in list(param.items()):
+                f.write("%s\n" % (k + ':' + f'{v}'))
