@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "SimpleCNN_residual_5_nosn",
+    "experim_name": "SimpleCNN_halfaveraged_5_nosn",
     "seeds": [42],
     "dataset": "BSD500",
     "sigma": 5,
@@ -11,7 +11,7 @@
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
-        "architecture": "residual",
+        "architecture": "halfaveraged",
         "spectral_norm": "None",
         "batchnorm": false,
         "beta": 0.6,
