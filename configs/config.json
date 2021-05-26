@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "SimpleCNN_residual_15",
+    "experim_name": "SimpleCNN_residual_15_nosn",
     "seeds": [42],
     "dataset": "BSD500",
     "sigma": 15,
@@ -12,7 +12,7 @@
         "kernel_size": 3,
         "padding": 1,
         "architecture": "residual",
-        "spectral_norm": "Chen",
+        "spectral_norm": "None",
         "batchnorm": false,
         "beta": 0.6,
         "activation_type": "relu",

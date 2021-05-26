@@ -25,7 +25,7 @@ def parse_arguments():
     parser.add_argument('--algo', default="admm", type=str, help='admm/fbs')
     parser.add_argument('--mu_upper', default=2.0, type=float, help='highest value of mu')
     parser.add_argument('--mu_lower', default=0.1, type=float, help='lowest value of mu')
-    parser.add_argument('--mu_step', default=5, type=int, help='step')
+    parser.add_argument('--mu_step', default=20, type=int, help='step')
     parser.add_argument("--sigma", type=float, default=0.05, help="Noise level for the denoising model")
     parser.add_argument("--alpha", type=float, default=2.0, help="Step size in Plug-and Play")
     parser.add_argument("--maxitr", type=int, default=100, help="Number of iterations")
