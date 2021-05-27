@@ -1,9 +1,9 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_halfaveraged_15",
+    "experim_name": "DnCNN_halfaveraged_5",
     "seeds": [42],
     "dataset": "BSD500",
-    "sigma": 15,
+    "sigma": 5,
 
     "model":{
         "depth": 17,
