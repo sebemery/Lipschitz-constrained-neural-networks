@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "DnCNN_halfaveraged_5",
+    "experim_name": "DnCNN_halfaveraged_5_nosn",
     "seeds": [42],
     "dataset": "BSD500",
     "sigma": 5,
@@ -12,7 +12,7 @@
         "kernel_size": 3,
         "padding": 1,
         "architecture": "halfaveraged",
-        "spectral_norm": "Chen",
+        "spectral_norm": "None",
         "batchnorm": true,
         "beta": 0.6,
         "activation_type": "relu",
