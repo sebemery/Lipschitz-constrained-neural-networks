@@ -6,14 +6,14 @@ from models.SplineActivations.deepBspline_lipschitz_maxprojection import DeepBSp
 from models.SplineActivations.deepBspline_lipschitz_orthoprojection import DeepBSplineLipschitzOrthoProjection
 
 
-def spline_grid_from_range(spline_size, range_=2, round_to=1e-6):
+def spline_grid_from_range(spline_size, range=2, round_to=1e-6):
     """ Compute spline grid spacing from desired one-side range
     and the number of activation coefficients.
 
     Args:
         round_to: round grid to this value
     """
-    spline_grid = ((range_ / (spline_size//2)) // round_to) * round_to
+    spline_grid = ((range / (spline_size//2)) // round_to) * round_to
 
     return spline_grid
 
