@@ -1,19 +1,19 @@
 {
     "name": "DnCNN",
-    "experim_name": "RealSN_SimpleCNN_halfaveragedres_15",
+    "experim_name": "RealSN_DnCNN_halfaveragedres_15",
     "seeds": [42],
     "dataset": "BSD500",
     "sigma": 15,
 
     "model":{
-        "depth": 4,
+        "depth": 17,
         "n_channels": 64,
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
         "architecture": "halfaveragedres",
         "spectral_norm": "Chen",
-        "batchnorm": false,
+        "batchnorm": true,
         "beta": 0.6,
         "activation_type": "relu",
         "shared_activation": false,
