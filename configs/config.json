@@ -1,9 +1,9 @@
 {
     "name": "DnCNN",
-    "experim_name": "RealSN_SimpleCNN_halfaveraged_res_5",
+    "experim_name": "RealSN_SimpleCNN_halfaveragedres_15",
     "seeds": [42],
     "dataset": "BSD500",
-    "sigma": 5,
+    "sigma": 15,
 
     "model":{
         "depth": 4,
@@ -11,7 +11,7 @@
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
-        "architecture": "halfaveraged_res",
+        "architecture": "halfaveragedres",
         "spectral_norm": "Chen",
         "batchnorm": false,
         "beta": 0.6,

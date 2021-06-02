@@ -26,7 +26,7 @@ class DnCNN(BaseModel):
             return out
         elif self.architecture == "halfaveraged":
             return (y+out)/2.0
-        elif self.architecture == "halfaveraged_res":
+        elif self.architecture == "halfaveragedres":
             return (y-out)/2.0
         else:
             raise ValueError("The architecture specified is not provided choose : residual, direct or halfaveraged")
