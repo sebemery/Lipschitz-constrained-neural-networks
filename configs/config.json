@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "RealSN_DnCNN_residual_5_Bspline_bias_SGD",
+    "experim_name": "RealSN_DnCNN_halfaveraged_5_Bspline_bias",
     "seeds": [42],
     "dataset": "BSD500",
     "sigma": 5,
@@ -33,7 +33,7 @@
 
 
     "optimizer": {
-        "type": ["SGD"],
+        "type": ["Adam"],
         "args":{
             "lr": 1e-4,
             "weight_decay": 0.0,
