@@ -33,7 +33,7 @@
 
 
     "optimizer": {
-        "type": ["Adam"],
+        "type": ["SGD"],
         "args":{
             "lr": 1e-4,
             "weight_decay": 0.0,
