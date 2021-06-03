@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "RealSN_DnCNN_residual_5_Bspline_bias",
+    "experim_name": "RealSN_DnCNN_residual_5_Bspline_bias_SGD",
     "seeds": [42],
     "dataset": "BSD500",
     "sigma": 5,
