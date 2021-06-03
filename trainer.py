@@ -101,7 +101,7 @@ class Trainer:
         if optim_name == 'Adam':
             optimizer = torch.optim.Adam(params_iter, lr=lr)
         elif optim_name == 'SGD':
-            optimizer = torch.optim.SGD(params_iter, lr=lr, momentum=0.9, nesterov=True)
+            optimizer = torch.optim.SGD(params_iter, lr=lr, momentum=0.0, nesterov=True)
         else:
             raise ValueError('Need to provide a valid optimizer type')
 
