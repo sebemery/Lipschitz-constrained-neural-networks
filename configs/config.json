@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "RealSN_DnCNN_residual_5_Bspline_bias_10-5",
+    "experim_name": "RealSN_DnCNN_halfaveraged_5_Bspline_bias_SGD",
     "seeds": [42],
     "dataset": "BSD500",
     "sigma": 5,
@@ -11,7 +11,7 @@
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
-        "architecture": "residual",
+        "architecture": "halfaveraged",
         "spectral_norm": "Chen",
         "batchnorm": true,
         "beta": 0.6,
@@ -33,9 +33,9 @@
 
 
     "optimizer": {
-        "type": ["Adam"],
+        "type": ["SGD"],
         "args":{
-            "lr": 1e-5,
+            "lr": 1e-4,
             "weight_decay": 0.0,
             "momentum": 0.0
         }
