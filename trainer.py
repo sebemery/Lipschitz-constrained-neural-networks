@@ -26,7 +26,7 @@ class Trainer:
             self.model = self.model.to(device)
         print(self.model.get_num_params())
         self.set_optimization()
-        # self.scheduler = torch.optim.lr_scheduler.StepLR(self.main_optimizer, step_size=25, gamma=0.1)
+        self.scheduler = torch.optim.lr_scheduler.StepLR(self.main_optimizer, step_size=25, gamma=0.1)
         if self.config["dataset"] == "fastMRI":
             self.criterion = torch.nn.MSELoss(reduction="sum")
         elif self.config["dataset"] == "BSD500":
@@ -250,8 +250,8 @@ class Trainer:
 
             tbar.set_description('T ({}) | TotalLoss {:.3f} |'.format(epoch, self.total_mse_loss.average))
 
-        # if self.config["dataset"] == "BSD500":
-            # self.scheduler.step(epoch=epoch-1)
+        if self.config["dataset"] == "BSD500":
+            self.scheduler.step(epoch=epoch-1)
         return log
 
     def optimizer_zero_grad(self):

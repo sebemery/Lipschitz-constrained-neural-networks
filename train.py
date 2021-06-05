@@ -7,9 +7,11 @@ import models
 from utils import Logger, weights_init_kaiming
 from trainer import Trainer
 import os
+import time
 
 
 def main(config, resume, device):
+    start_time = time.time()
     if config["dataset"] == "fastMRI":
         train_data = dataloader.KneeMRI(config["train_loader"]["target_dir"], config["train_loader"]["noise_dirs"])
         val_data = dataloader.KneeMRI(config["val_loader"]["target_dir"], config["val_loader"]["noise_dirs"])
@@ -37,6 +39,9 @@ def main(config, resume, device):
         train_logger = Logger()
         trainer = Trainer(config, trainloader, valloader, model, train_logger, seed, resume, device)
         trainer.train()
+        t = time.time() - start_time
+        with open(f'{config["experim_name"]}_time.txt', 'w') as f:
+            f.write("%s\n" % ('Time :' + f'{t}'))
 
 
 if __name__ == '__main__':
