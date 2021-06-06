@@ -206,7 +206,7 @@ class DnCNN(BaseModel):
                 elif (shared_activation is False) and (shared_channels is False):
                     self.layers.append(self.init_activation(('conv', n_channels)))
             for _ in range(depth - 2):
-                self.layers.append(PersevalConv(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding))
+                self.layers.append(PersevalConv(in_channels=n_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding))
                 if self.activation == "relu":
                     self.layers.append(nn.ReLU(inplace=True))
                 elif self.activation == "leaky_relu":
@@ -222,7 +222,7 @@ class DnCNN(BaseModel):
                         self.layers.append(self.init_activation(('conv', 1)))
                     elif (shared_activation is False) and (shared_channels is False):
                         self.layers.append(self.init_activation(('conv', n_channels)))
-            self.layers.append(PersevalConv(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding))
+            self.layers.append(PersevalConv(in_channels=n_channels, out_channels=image_channels, kernel_size=kernel_size, padding=padding))
 
         else:
             raise ValueError("The normalization specified is not provided choose : None, Normal, Chen or Perseval")
