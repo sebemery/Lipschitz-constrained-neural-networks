@@ -1,19 +1,19 @@
 {
     "name": "DnCNN",
-    "experim_name": "RealSN_SimpleCNN_halfaveraged_15_BsplineMaxProj_time",
+    "experim_name": "RealSN_DnCNN_halfaveraged_5_Bspline_SGD10e-5",
     "seeds": [42],
     "dataset": "BSD500",
-    "sigma": 15,
+    "sigma": 5,
 
     "model":{
-        "depth": 4,
+        "depth": 17,
         "n_channels": 64,
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
         "architecture": "halfaveraged",
         "spectral_norm": "Chen",
-        "batchnorm": false,
+        "batchnorm": true,
         "beta": 0.6,
         "activation_type": "deepBspline_lipschitz_maxprojection",
         "shared_activation": false,
@@ -33,9 +33,9 @@
 
 
     "optimizer": {
-        "type": ["Adam"],
+        "type": ["SGD"],
         "args":{
-            "lr": 1e-3,
+            "lr": 1e-5,
             "weight_decay": 0.0,
             "momentum": 0.0
         }
@@ -68,7 +68,7 @@
     },
 
     "trainer": {
-        "epochs": 5,
+        "epochs": 50,
         "save_dir": "saved/",
         "save_period": 5,
         
