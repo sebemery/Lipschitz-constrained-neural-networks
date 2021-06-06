@@ -185,7 +185,7 @@ class DnCNN(BaseModel):
             elif self.dataset == "fastMRI":
                 self.layers.append(nn.Conv2d(in_channels=n_channels, out_channels=image_channels, kernel_size=kernel_size, padding=padding))
 
-        elif spectral_norm == "Perseval":
+        elif spectral_norm == "Parseval":
 
             self.layers.append(PersevalConv(in_channels=image_channels, out_channels=n_channels, kernel_size=kernel_size, padding=padding))
             if self.activation == "relu":
