@@ -1,9 +1,9 @@
 {
     "name": "DnCNN",
-    "experim_name": "RealSN_SimpleCNN_halfaveraged_5_Bspline_time",
+    "experim_name": "RealSN_SimpleCNN_halfaveraged_15_Bspline_time",
     "seeds": [42],
     "dataset": "BSD500",
-    "sigma": 5,
+    "sigma": 15,
 
     "model":{
         "depth": 4,
