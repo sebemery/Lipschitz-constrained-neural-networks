@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "RealSN_SimpleCNN_halfaveraged_15_relu_time",
+    "experim_name": "RealSN_SimpleCNN_halfaveraged_15_BsplineOrtho_time",
     "seeds": [42],
     "dataset": "BSD500",
     "sigma": 15,
@@ -15,7 +15,7 @@
         "spectral_norm": "Chen",
         "batchnorm": false,
         "beta": 0.6,
-        "activation_type": "relu",
+        "activation_type": "deepBspline_lipschitz_orthoprojection",
         "shared_activation": false,
         "shared_channels": false,
         "QP": "cvxpy",
