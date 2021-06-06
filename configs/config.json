@@ -1,9 +1,9 @@
 {
     "name": "DnCNN",
-    "experim_name": "RealSN_DnCNN_halfaveraged_15_Relu_time",
+    "experim_name": "RealSN_DnCNN_halfaveraged_5_Bspline_SGD10-e5",
     "seeds": [42],
     "dataset": "BSD500",
-    "sigma": 15,
+    "sigma": 5,
 
     "model":{
         "depth": 17,
@@ -15,7 +15,7 @@
         "spectral_norm": "Chen",
         "batchnorm": true,
         "beta": 0.6,
-        "activation_type": "relu",
+        "activation_type": "deepBspline_lipschitz_maxprojection",
         "shared_activation": false,
         "shared_channels": false,
         "QP": "cvxpy",
@@ -33,9 +33,9 @@
 
 
     "optimizer": {
-        "type": ["Adam"],
+        "type": ["SGD"],
         "args":{
-            "lr": 1e-3,
+            "lr": 1e-5,
             "weight_decay": 0.0,
             "momentum": 0.0
         }
