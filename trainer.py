@@ -236,7 +236,7 @@ class Trainer:
             total_loss = data_fidelity + regularization
             total_loss.backward()
             self.optimizer_step()
-            if self.config["model"]["spectral_norm"] == "Perseval":
+            if self.config["model"]["spectral_norm"] == "Parseval":
                 with torch.no_grad():
                     self.model.perseval_normalization(self.config["model"]["beta"])
             self._update_losses(total_loss.detach().cpu().numpy())
