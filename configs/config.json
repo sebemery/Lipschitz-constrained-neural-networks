@@ -1,6 +1,6 @@
 {
     "name": "DnCNN",
-    "experim_name": "Parseval_SimpleCNN_residual_0.05_0.6",
+    "experim_name": "Parseval_SimpleCNN_halfaveraged_0.05_0.5",
     "seeds": [42],
     "dataset": "fastMRI",
     "sigma": 0.05,
@@ -11,7 +11,7 @@
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
-        "architecture": "residual",
+        "architecture": "halfaveraged",
         "spectral_norm": "Parseval",
         "batchnorm": false,
         "beta": 0.6,
