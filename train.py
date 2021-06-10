@@ -39,9 +39,6 @@ def main(config, resume, device):
         train_logger = Logger()
         trainer = Trainer(config, trainloader, valloader, model, train_logger, seed, resume, device)
         trainer.train()
-        t = time.time() - start_time
-        with open(f'{config["experim_name"]}_time.txt', 'w') as f:
-            f.write("%s\n" % ('Time :' + f'{t}'))
 
 
 if __name__ == '__main__':

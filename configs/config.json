@@ -11,6 +11,7 @@
         "image_channels": 1,
         "kernel_size": 3,
         "padding": 1,
+        "bias": true,
         "architecture": "halfaveraged",
         "spectral_norm": "Parseval",
         "batchnorm": false,
@@ -37,7 +38,10 @@
         "args":{
             "lr": 1e-3,
             "weight_decay": 0.0,
-            "momentum": 0.0
+            "momentum": 0.0,
+            "stepscheduler": true,
+            "step": 25,
+            "gamma": 0.1
         }
     },
 

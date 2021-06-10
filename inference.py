@@ -22,7 +22,11 @@ def main():
     config = json.load(open(args.config))
 
     # DATA
-    testdataset = dataloader.KneeMRI(config["test_loader"]["target_dir"], config["test_loader"]["noise_dirs"])
+    if config["dataset"] == "fastMRI":
+        testdataset = dataloader.KneeMRI(config["test_loader"]["target_dir"], config["test_loader"]["noise_dirs"])
+    elif config["dataset"] == "BSD500":
+        testdataset = dataloader.BSD500(config["test_loader"]["target_dir"], config["sigma"])
+
     testloader = DataLoader(testdataset, batch_size=config["test_loader"]["batch_size"],
                            shuffle=config["test_loader"]["shuffle"], num_workers=config["test_loader"]["num_workers"])
 
@@ -35,7 +39,10 @@ def main():
                          shared_channels=config["model"]["shared_channels"], device=args.device)
     device = args.device
     checkpoint = torch.load(args.model, device)
-    criterion = torch.nn.MSELoss(reduction="sum")
+    if config["dataset"] == "fastMRI":
+        criterion = torch.nn.MSELoss(reduction="sum")
+    elif config["dataset"] == "BSD500":
+        criterion = torch.nn.MSELoss(size_average=False)
 
     if device == 'cpu':
         for key in list(checkpoint['state_dict'].keys()):
@@ -63,16 +70,22 @@ def main():
 
     with torch.no_grad():
         for batch_idx, data in enumerate(tbar):
-            cropp1, cropp2, cropp3, cropp4, target1, target2, target3, target4, image_id = data
-            cropp = torch.cat([cropp1, cropp2, cropp3, cropp4], dim=0)
-            target = torch.cat([target1, target2, target3, target4], dim=0)
+            if config["dataset"] == "fastMRI":
+                cropp1, cropp2, cropp3, cropp4, target1, target2, target3, target4, image_id = data
+                cropp = torch.cat([cropp1, cropp2, cropp3, cropp4], dim=0)
+                target = torch.cat([target1, target2, target3, target4], dim=0)
+            elif config["dataset"] == "BSD500":
+                cropp, target = data
             if args.device != 'cpu':
                 cropp, target = cropp.to(non_blocking=True), target.cuda(non_blocking=True)
             batch_size = cropp.shape[0]
             output = model(cropp)
 
             # LOSS
-            loss = criterion(output, target)/batch_size
+            if config["dataset"] == "fastMRI":
+                loss = criterion(output, target) / batch_size
+            elif config["dataset"] == "BSD500":
+                loss = criterion(output, target)/(output.size()[0]*2)
             total_loss_val.update(loss.cpu())
 
             # PRINT INFO
