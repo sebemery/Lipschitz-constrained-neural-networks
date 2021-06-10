@@ -9,3 +9,6 @@ numpy
 imageio
 scikit-image
 scipy
+cvxpy
+qpth
+cvxpylayers
