@@ -142,36 +142,36 @@ Bellow we detail the model's parameters that can be controlled in the config fil
 ```javascript
 {
     "name": "DnCNN",
-    "experim_name": "Parseval_SimpleCNN_halfaveraged_0.05_0.5",
-    "seeds": [42],
-    "dataset": "fastMRI",
-    "sigma": 0.05,
+    "experim_name": "DnCNN",                              // experiment name
+    "seeds": [42],                                        // pytorch seeds
+    "dataset": "fastMRI",                                 // dataset used
+    "sigma": 0.05,                                        // noise level used
 
     "model":{
-        "depth": 4,
-        "n_channels": 64,
-        "image_channels": 1,
-        "kernel_size": 3,
-        "padding": 1,
-        "bias": true,
-        "architecture": "halfaveraged",
-        "spectral_norm": "Parseval",
-        "batchnorm": false,
-        "beta": 0.6,
-        "activation_type": "relu",
-        "shared_activation": false,
-        "shared_channels": false,
-        "QP": "cvxpy",
-        "spline_init" : "relu",
-        "spline_size": 51,
-        "spline_range": 0.1,
-        "slope_diff_threshold": 0,
-        "sparsify_activations" : false,
-        "hyperparam_tuning" : false,
-        "lipschitz" : false,
-        "lmbda" : 1e-4,
-        "outer_norm" : 1,
-        "weight_decay" : 5e-4
+        "depth": 4,                                       // number of convolutional layer
+        "n_channels": 64,                                 // number of features map
+        "image_channels": 1,                              // number of channels of th input image ( 1 grayscale)
+        "kernel_size": 3,                                 // kernel size 
+        "padding": 1,                                     // padding
+        "bias": true,                                     // boolean to add bias to convolutional layer
+        "architecture": "halfaveraged",                   // mapping used either residual, halfaveraged or direct
+        "spectral_norm": "Parseval",                      // Spectral nOrmalization used None, Normal (SN), Chen (RealSN) or Parseval
+        "batchnorm": false,                               // Boolean to use batch norm
+        "beta": 0.6,                                      // Parseval strength parameter
+        "activation_type": "relu",                        // activation to use relu, deepBspline, deepBspline_lipschitz_maxprojection, deepBspline_lipschitz_orthoprojection
+        "shared_activation": false,                       // wheter to share activation module in B-splines
+        "shared_channels": false,                         // wheter to share activation map for convolutions in b-splines
+        "QP": "cvxpy",                                    // library used in orthoprojection cvxpy or qpth
+        "spline_init" : "relu",                           // spline activation
+        "spline_size": 51,                                // number of knots in B-splines
+        "spline_range": 0.1,                              // step size in B-splines
+        "slope_diff_threshold": 0,                        // threshold on slopes 
+        "sparsify_activations" : false,                   // wheter to sparsify activation based on threshold at the end of training
+        "hyperparam_tuning" : false,                      // boolean to tune hyperparameters
+        "lipschitz" : false,                              // boolean to compute lipschitz regularization (not used in this project) 
+        "lmbda" : 1e-4,                                   // total variation  hyperparameter
+        "outer_norm" : 1,                                 // outer norm used
+        "weight_decay" : 5e-4                             // weight decay
     },
 
 
