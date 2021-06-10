@@ -227,3 +227,45 @@ Bellow we detail the model's parameters that can be controlled in the config fil
     }
 }
 ```
+
+If the dataset used is ```BSD500```, there is no noise directories, just change the target directory in the config file.
+
+To run a SimpleCNN:
+```javascript
+{
+    "name": "SimpleCNN",
+    "experim_name": "SimpleCNN",                              // experiment name
+    "seeds": [42],                                        // pytorch seeds
+    "dataset": "fastMRI",                                 // dataset used
+    "sigma": 0.05,                                        // noise level used
+
+    "model":{
+        "depth": 4,                                       
+        "n_channels": 64,                                 
+        "image_channels": 1,                              
+        "kernel_size": 3,                                 
+        "padding": 1,                                                                                     
+        "batchnorm": false,                               
+    }
+}
+```
+
+To run a DnCNN:
+```javascript
+{
+    "name": "DnCNN",
+    "experim_name": "DnCNN",                              // experiment name
+    "seeds": [42],                                        // pytorch seeds
+    "dataset": "fastMRI",                                 // dataset used
+    "sigma": 0.05,                                        // noise level used
+
+    "model":{
+        "depth": 17,                                       
+        "n_channels": 64,                                 
+        "image_channels": 1,                              
+        "kernel_size": 3,                                 
+        "padding": 1,                                                                                     
+        "batchnorm": true,                               
+    }
+}
+```
