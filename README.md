@@ -42,7 +42,7 @@ Here are the flags available for extraction:
 --noise          Number of noisy realisation for each images
 --sigma          Variance of the noise
 ```
-For each sets ```singlecoil_train```, ```singlecoil_validation``` and ```singlecoil_test``` run the extraction of 2d slices. For all sets, use 5 slices to extract with variance 0.01. For the training set use  2 noisy realisations and for the validation and test only one. As a side note the noisy realistion vary everytime. as we do not set a seed.
+For each sets ```singlecoil_train```, ```singlecoil_validation``` and ```singlecoil_test``` run the extraction of 2d slices. For all sets, use 5 slices to extract with variance 0.05. For the training set use  2 noisy realisations and for the validation and test only one. As a side note the noisy realistion vary everytime. as we do not set a seed.
 
 In the second part we use **[BSD500](https://github.com/uclaopt/Provable_Plug_and_Play/tree/master/training/data)**, which can be downladed by clicking on the link and downloading the data folder from the github repository.
 Save the three sub-folders ```train```, ```Set68``` amd ```Set12``` under the ```data``` folder from this repository.
