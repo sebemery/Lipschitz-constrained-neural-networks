@@ -2,7 +2,7 @@
 Master semester project carried out at the Biomedical imaging group (BIG) at EPFL during the spring 2021 semester under the supervision of Bohra Pakshal
 
 #### Description
-Plug-and-Play methods, a subclass of variational methods in inverse problem, is characterized by a particularly modular structure which allows to plug-in state-of-the-art image denoisers, instead of optimization derived denoisers. The goal is to investigate the convergence's properties of Convolutional Neural Networks denoisers and their performance when plug-in in such frameworks. This work aims to extend the previous work  done on the subject by **[Ryu et al](https://github.com/uclaopt/Provable_Plug_and_Play)**. The goal is to build firmly  nonexpansive CNNs to soften assumption's made by Ryu et al. on the  data-fidelity term to broaden the theoretical convergence of such algorithm in the image reconstruction field, while reaching approximately the same performance level. On the road, we will study lipschitz-constrained CNNs and B-spline activations.  
+Plug-and-Play methods, a subclass of variational methods in inverse problem, is characterized by a particularly modular structure which allows to plug-in state-of-the-art image denoisers, instead of optimization derived ones. The goal is to investigate the convergence properties of Convolutional Neural Networks denoisers and their performance when plug-in in such frameworks. This work aims to extend the previous work  done on the subject by **[Ryu et al](https://github.com/uclaopt/Provable_Plug_and_Play)**. The goal is to build firmly  nonexpansive CNNs to soften assumptions made by Ryu et al. on the  data-fidelity term to broaden the theoretical convergence of such algorithm in the image reconstruction field, while reaching approximately the same performance level. On the road, we will study lipschitz-constrained CNNs and B-spline activations.  
 #### Requirements
 
 The required packages are `pytorch` and `torchvision`,  `opencv` and `h5py` for data-preprocessing, `cvxpy`, `cvxpylayers` and `qpth` for quadratic programming and `tqdm` for showing the training progress.
@@ -16,7 +16,14 @@ pip install -r requirements.txt
 In this project, we use two datasets : NYU fastMRI nad BSD500.
 
 In the first part, we use **[fastMRI challenge](https://fastmri.org/)**, to obtain it click on the link and ask for access.
-Once obtained, save the folders containing the ```.h5``` files under the ```data/``` directory.
+Once obtained, save the folders ```singlecoil_train``` and ```singlecoil_val``` containing the ```.h5``` files under the ```data/``` directory.
+
+We will first split the val dataset in two sets to generate a validation and a test set. Do the following command to generate them :
+```bash
+1) cd data
+2 ) python split_val_test.py --volumedir singlecoil_val --outputdirval singlecoil_validation --outputdirtest singlecoil_test --numberval 100 --numbertest 99 --seed 42
+```
+By running the the file with defaults settings, it will generate the exact same splits that we used. 
 
 The dataloader in this framework needs to work with 2d slices as input, thus the first thing to do is to extract the 2d 
 images from the MRI volume contained in the ```.h5``` files. In the project directory do the following command to 
@@ -24,7 +31,7 @@ extract the images.
 
 ```bash
 1) cd data
-2 ) python select_slices.py --volumedir singlecoil_train --outputdir singlecoil_train_5_2d --nbslices 5
+2 ) python select_slices.py --volumedir singlecoil_train --outputdir singlecoil_train_5_2d --nbslices 5 --noise 2 --sigma 0.01
 ```
 Here are the flags available for extraction:
 
@@ -32,7 +39,11 @@ Here are the flags available for extraction:
 --volumedir      Directory containing the .h5 files
 --outputdir      Directory where 2d images are saved
 --nbslices       The number of slices to extract per volume (needs to be odd, extract around the center of the volume)
+--noise          Number of noisy realisation for each images
+--sigma          Variance of the noise
 ```
+For each sets ```singlecoil_train```, ```singlecoil_validation``` and ```singlecoil_test``` run the extraction of 2d slices. For all sets, use 5 slices to extract with variance 0.01. For the training set use  2 noisy realisations and for the validation and test only one. As a side note the noisy realistion vary everytime. as we do not set a seed.
+
 In the second part we use **[BSD500](https://github.com/uclaopt/Provable_Plug_and_Play/tree/master/training/data)**, which can be downladed by clicking on the link and downloading the data folder from the github repository.
 Save the three sub-folders ```train```, ```Set68``` amd ```Set12``` under the ```data``` folder from this repository.
 
